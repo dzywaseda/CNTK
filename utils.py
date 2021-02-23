@@ -54,6 +54,8 @@ def load_cifar(path = "cifar-10-batches-py"):
 
 	X_test= []
 	y_test= []
+	i1 = 0
+	i2 = 0
 	for index,item in enumerate(y_test_total):
 		if item == 0:
 			if i1 >= samples:
