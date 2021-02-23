@@ -80,17 +80,17 @@ def xx(x):
 	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	if not fix:
 		T += S
-	print("s",S)
 
 	for i in range(1, d - 1):
 		L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
 		iL = 1.0 / L
 		RL.append(L)
 		iRL.append(iL)
-		trans(trans_blocks, trans_threads, (S, T, L, L, iL, iL))		
+		trans(trans_blocks, trans_threads, (S, T, L, L, iL, iL))
+		print(S)
+		print(S.shape)
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
-	print("next", S)
 
 	L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
 	iL = 1.0 / L
