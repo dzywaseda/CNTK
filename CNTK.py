@@ -4,6 +4,8 @@ import argparse
 import scipy.linalg
 from utils import load_cifar
 
+samples = 100
+
 parser = argparse.ArgumentParser(description = 'Convolutional Neural Tangent Kernel (CNTK) for CIFAR-10')
 parser.add_argument('--depth', default = 21, type = int, help = 'depth of CNTK (#conv layers + 1)')
 parser.add_argument('--gap', default = "yes", type = str, help = 'whether GAP (global average pooling) is used')
@@ -122,15 +124,48 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 
 #Load CIFAR-10.
 (X_train, y_train), (X_test, y_test) = load_cifar()
-X_train = X_train[0:10,:,:,:]
-y_train = y_train[0:10]
-X_test  = X_test[0:10,:,:,:]
-y_test = y_test[0:10]
+x1 = 0
+x2 = 0
+deadlist = []
+for index,item in enumerate(y_train):
+	if item == 0:
+		if x1 >= samples:
+			continue
+		deadlist.append(index)
+		x1 = x1 + 1
+	if item == 1:
+		if x2 >= samples:
+			continue
+		deadlist.append(index)
+		x2 = x2 + 1
+
+X_train = X_train[deadlist,:,:,:]
+y_train = y_train[deadlist]
+
+x1 = 0
+x2 = 0
+deadlist = []
+for index,item in enumerate(y_test):
+	if item == 0:
+		if x1 >= samples:
+			continue
+		deadlist.append(index)
+		x1 = x1 + 1
+	if item == 1:
+		if x2 >= samples:
+			continue
+		deadlist.append(index)
+		x2 = x2 + 1
+
+X_test  = X_test[deadlist,:,:,:]
+y_test = y_test[deadlist]
+
 X = np.concatenate((X_train, X_test), axis = 0)
 N = X.shape[0]
 N_train = X_train.shape[0]
 N_test = X_test.shape[0]
 X = cp.asarray(X).reshape(-1, 3, 1024)
+print(X.shape)
 
 #Calculate diagonal entries.
 L = []
