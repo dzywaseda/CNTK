@@ -7,7 +7,7 @@ def load_cifar(path = "cifar-10-batches-py"):
 	train_labels = []
 
 	for i in range(1, 6):
-    		with open(os.path.join(path, "data_batch_{0}".format(i)), 'rb') as f:
+		with open(os.path.join(path, "data_batch_{0}".format(i)), 'rb') as f:
 			cifar_out = pickle.load(f,encoding='latin1')
 		train_batches.append(cifar_out[b"data"])
 		train_labels.extend(cifar_out[b"labels"])
