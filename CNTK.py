@@ -2,7 +2,7 @@ import cupy as cp
 import numpy as np
 import argparse
 import scipy.linalg
-from utils import load_cifar
+from utilpy3 import load_cifar
 
 samples = 100
 
