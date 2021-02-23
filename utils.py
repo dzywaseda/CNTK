@@ -55,12 +55,21 @@ def load_cifar(path = "cifar-10-batches-py"):
 	X_test= []
 	y_test= []
 	for index,item in enumerate(y_test_total):
-		if item ==0 or item ==1:
+		if item == 0:
+			if i1 >= samples:
+				continue
 			X_test.append(X_test_total[index,:,:,:])
 			y_test.append(y_test_total[index])
+			i1 = i1 + 1
+		if item == 1:
+			if i2 >= samples:
+				continue
+			X_test.append(X_test_total[index,:,:,:])
+			y_test.append(y_test_total[index])
+			i2 = i2 + 1
 	X_test = np.asarray(X_test)
 	y_test = np.asarray(y_test)
-	print(X_train.shape)
+	print(X_test.shape)
 	print(y_test.shape)
  
 	mean = X_train.mean(axis = (0, 2, 3)) 
