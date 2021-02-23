@@ -87,8 +87,6 @@ def xx(x):
 		RL.append(L)
 		iRL.append(iL)
 		trans(trans_blocks, trans_threads, (S, T, L, L, iL, iL))
-		print(S)
-		print(S.shape)
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
 
@@ -107,7 +105,6 @@ def xx(x):
 #iLx and iLz are reciprocals of diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
 def xz(x, z, Lx, Lz, iLx, iLz):
 	S = cp.matmul(x.T, z).reshape(32, 32, 32, 32)
-	print(S)
 	conv3(conv_blocks, conv_threads, (S, S))
 	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	if not fix:
@@ -119,14 +116,16 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 		conv3(conv_blocks, conv_threads, (T, T))
 
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
-	print(T)
-
 	if fix:
 		T -= S	
 	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
 
 #Load CIFAR-10.
 (X_train, y_train), (X_test, y_test) = load_cifar()
+X_train = X_train[0:10,:,:,:]
+y_train = y_train[0:10]
+X_test  = X_test[0:10,:,:,:]
+y_test = y_test[0:10]
 X = np.concatenate((X_train, X_test), axis = 0)
 N = X.shape[0]
 N_train = X_train.shape[0]
