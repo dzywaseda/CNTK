@@ -126,6 +126,7 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 (X_train, y_train), (X_test, y_test) = load_cifar()
 x1 = 0
 x2 = 0
+x3 = 0
 deadlist = []
 for index,item in enumerate(y_train):
 	if item == 0:
@@ -138,12 +139,18 @@ for index,item in enumerate(y_train):
 			continue
 		deadlist.append(index)
 		x2 = x2 + 1
+	if item == 2:
+		if x3 >= samples:
+			continue
+		deadlist.append(index)
+		x3 = x3 + 1
 
 X_train = X_train[deadlist,:,:,:]
 y_train = y_train[deadlist]
 
 x1 = 0
 x2 = 0
+x3 = 0
 deadlist = []
 for index,item in enumerate(y_test):
 	if item == 0:
@@ -156,6 +163,11 @@ for index,item in enumerate(y_test):
 			continue
 		deadlist.append(index)
 		x2 = x2 + 1
+	if item == 2:
+		if x3 >= samples:
+			continue
+		deadlist.append(index)
+		x3 = x3 + 1
 
 X_test  = X_test[deadlist,:,:,:]
 y_test = y_test[deadlist]
