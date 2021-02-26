@@ -126,7 +126,7 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 (X_train, y_train), (X_test, y_test) = load_cifar()
 x1 = 0
 x2 = 0
-x3 = 0
+#x3 = 0
 deadlist = []
 for index,item in enumerate(y_train):
 	if item == 0:
