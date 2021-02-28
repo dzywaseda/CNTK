@@ -84,6 +84,8 @@ def xx(x):
 		T += S
 
 	for i in range(1, d - 1):
+		#cupy.diag only take diagonal array output length 1024
+		#cupy.sqrt Elementwise square root
 		L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
 		iL = 1.0 / L
 		RL.append(L)
