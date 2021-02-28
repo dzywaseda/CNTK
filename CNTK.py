@@ -4,7 +4,7 @@ import argparse
 import scipy.linalg
 from utilpy3 import load_cifar
 
-samples = 100
+samples = 10
 
 parser = argparse.ArgumentParser(description = 'Convolutional Neural Tangent Kernel (CNTK) for CIFAR-10')
 parser.add_argument('--depth', default = 21, type = int, help = 'depth of CNTK (#conv layers + 1)')
@@ -78,7 +78,9 @@ def xx(x):
 	iRL = [1.0, ]
 
 	S = cp.matmul(x.T, x).reshape(32, 32, 32, 32)
+	print(S)
 	conv3(conv_blocks, conv_threads, (S, S))
+	print(S)
 	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	if not fix:
 		T += S
