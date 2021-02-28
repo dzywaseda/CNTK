@@ -82,7 +82,7 @@ void conv3check(const float s[32][32][32][32], float t[32][32][32][32], float D[
 					  + d[x2 + 1][y2] + d[x2 + 1][y2 + 1] + d[x2 + 1][y2 + 2]
 					  + d[x2 + 2][y2] + d[x2 + 2][y2 + 1] + d[x2 + 2][y2 + 2];
 
-}''', 'conv3')
+}''', 'conv3check')
 
 conv_blocks = (63, 63)
 conv_threads = (32, 32)
