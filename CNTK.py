@@ -49,6 +49,41 @@ void conv3(const float s[32][32][32][32], float t[32][32][32][32])
 					  + d[x2 + 2][y2] + d[x2 + 2][y2 + 1] + d[x2 + 2][y2 + 2];
 
 }''', 'conv3')
+
+conv3check = cp.RawKernel(r'''
+extern "C" __global__
+void conv3check(const float s[32][32][32][32], float t[32][32][32][32], float D[32 + 2][32 + 2]) 
+{
+	int x1 = threadIdx.x + blockIdx.x - 31;
+	int y1 = threadIdx.y + blockIdx.y - 31;
+	int x2 = threadIdx.x;
+	int y2 = threadIdx.y;
+
+	__shared__ float d[32 + 2][32 + 2];
+	if (x2 == 0){
+		d[0][y2 + 1] = d[33][y2 + 1] = 0;
+		if (x2 == 0 && y2 == 0)
+			d[0][0] = d[0][33] = d[33][0] = d[33][33] = 0; 
+	}
+	if (y2 == 0){
+		d[x2 + 1][0] = d[x2 + 1][33] = 0;
+	}
+
+	if (x1 < 0 || x1 > 31 || y1 < 0 || y1 > 31){
+		d[x2 + 1][y2 + 1] = 0;
+		return;
+	}
+	else
+		d[x2 + 1][y2 + 1] = s[x1][y1][x2][y2];
+	__syncthreads();
+	D[32 + 2][32 + 2] = d[x2 + 1][y2 + 1];
+
+	t[x1][y1][x2][y2] = d[x2][y2] + d[x2][y2 + 1] + d[x2][y2 + 2]
+					  + d[x2 + 1][y2] + d[x2 + 1][y2 + 1] + d[x2 + 1][y2 + 2]
+					  + d[x2 + 2][y2] + d[x2 + 2][y2 + 1] + d[x2 + 2][y2 + 2];
+
+}''', 'conv3')
+
 conv_blocks = (63, 63)
 conv_threads = (32, 32)
 
@@ -78,9 +113,8 @@ def xx(x):
 	iRL = [1.0, ]
 
 	S = cp.matmul(x.T, x).reshape(32, 32, 32, 32)
-	print(S)
-	conv3(conv_blocks, conv_threads, (S, S))
-	print(S)
+	D = cp.zeros((34, 34), dtype = cp.float32)
+	conv3check(conv_blocks, conv_threads, (S, S), D)
 	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	if not fix:
 		T += S
