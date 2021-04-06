@@ -3,8 +3,9 @@ import numpy as np
 import argparse
 import scipy.linalg
 from utilpy3 import load_cifar
+np.set_printoptions(threshold=10000)
 
-samples = 10
+samples = 2
 
 parser = argparse.ArgumentParser(description = 'Convolutional Neural Tangent Kernel (CNTK) for CIFAR-10')
 parser.add_argument('--depth', default = 21, type = int, help = 'depth of CNTK (#conv layers + 1)')
@@ -75,8 +76,9 @@ void conv3check(const float s[32][32][32][32], float t[32][32][32][32], float D[
 	}
 	else
 		d[x2 + 1][y2 + 1] = s[x1][y1][x2][y2];
+	  D[x2 + 2][y2 + 2] = s[x1][y1][x2][y2];
 	__syncthreads();
-	D[32 + 2][32 + 2] = d[x2 + 1][y2 + 1];
+
 
 	t[x1][y1][x2][y2] = d[x2][y2] + d[x2][y2 + 1] + d[x2][y2 + 2]
 					  + d[x2 + 1][y2] + d[x2 + 1][y2 + 1] + d[x2 + 1][y2 + 2]
@@ -114,7 +116,11 @@ def xx(x):
 
 	S = cp.matmul(x.T, x).reshape(32, 32, 32, 32)
 	D = cp.zeros((34, 34), dtype = cp.float32)
+	#print("before",S[:][0][0][0])
+	print("before",D)
 	conv3check(conv_blocks, conv_threads, (S, S, D))
+	#print("after",S[:][0][0][0])
+	print("after",D)
 	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	if not fix:
 		T += S
