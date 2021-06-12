@@ -6,6 +6,7 @@ from utilpy3 import load_cifar
 np.set_printoptions(threshold=10000)
 
 samples = 2
+sample_type =10
 
 parser = argparse.ArgumentParser(description = 'Convolutional Neural Tangent Kernel (CNTK) for CIFAR-10')
 parser.add_argument('--depth', default = 21, type = int, help = 'depth of CNTK (#conv layers + 1)')
@@ -168,21 +169,34 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 
 #Load CIFAR-10.
 (X_train, y_train), (X_test, y_test) = load_cifar()
-x1 = 0
-x2 = 0
+#x1 = 0
+#x2 = 0
 #x3 = 0
 deadlist = []
-for index,item in enumerate(y_train):
-	if item == 0:
-		if x1 >= samples:
-			continue
-		deadlist.append(index)
-		x1 = x1 + 1
-	if item == 1:
-		if x2 >= samples:
-			continue
-		deadlist.append(index)
-		x2 = x2 + 1
+
+for it in range(sample_type):
+	x = 0
+	for index,item in enumerate(y_train):
+		if item==it:
+			x = x + 1
+			deadlist.append(index)
+		if x >= samples:
+			break
+			
+		
+		
+#for index,item in enumerate(y_train):#3
+#	
+#	if item == 0:
+#		if x1 >= samples:
+#			continue
+#		deadlist.append(index)
+#		x1 = x1 + 1
+#	if item == 1:
+#		if x2 >= samples:
+#			continue
+#		deadlist.append(index)
+#		x2 = x2 + 1
 #	if item == 2:
 #		if x3 >= samples:
 #			continue
@@ -192,27 +206,37 @@ for index,item in enumerate(y_train):
 X_train = X_train[deadlist,:,:,:]
 y_train = y_train[deadlist]
 
-x1 = 0
-x2 = 0
+#x1 = 0
+#x2 = 0
 #x3 = 0
-deadlist = []
-for index,item in enumerate(y_test):
-	if item == 0:
-		if x1 >= samples:
-			continue
-		deadlist.append(index)
-		x1 = x1 + 1
-	if item == 1:
-		if x2 >= samples:
-			continue
-		deadlist.append(index)
-		x2 = x2 + 1
+#deadlist = []
+#for index,item in enumerate(y_test):#
+#	if item == 0:
+#		if x1 >= samples:
+#			continue
+#		deadlist.append(index)
+#		x1 = x1 + 1
+#	if item == 1:
+#		if x2 >= samples:
+#			continue
+#		deadlist.append(index)
+#		x2 = x2 + 1
 #	if item == 2:
 #		if x3 >= samples:
 #			continue
 #		deadlist.append(index)
 #		x3 = x3 + 1
 
+for it in range(sample_type):
+	x = 0
+	for index,item in enumerate(y_test):
+		if item==it:
+			x = x + 1
+			deadlist.append(index)
+		if x >= samples:
+			break
+			
+			
 X_test  = X_test[deadlist,:,:,:]
 y_test = y_test[deadlist]
 
