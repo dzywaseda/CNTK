@@ -169,9 +169,6 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 
 #Load CIFAR-10.
 (X_train, y_train), (X_test, y_test) = load_cifar()
-#x1 = 0
-#x2 = 0
-#x3 = 0
 deadlist = []
 
 for it in range(sample_type):
@@ -185,48 +182,12 @@ for it in range(sample_type):
 			
 		
 		
-#for index,item in enumerate(y_train):#3
-#	
-#	if item == 0:
-#		if x1 >= samples:
-#			continue
-#		deadlist.append(index)
-#		x1 = x1 + 1
-#	if item == 1:
-#		if x2 >= samples:
-#			continue
-#		deadlist.append(index)
-#		x2 = x2 + 1
-#	if item == 2:
-#		if x3 >= samples:
-#			continue
-#		deadlist.append(index)
-#		x3 = x3 + 1
 
 X_train = X_train[deadlist,:,:,:]
 y_train = y_train[deadlist]
 
-#x1 = 0
-#x2 = 0
-#x3 = 0
-#deadlist = []
-#for index,item in enumerate(y_test):#
-#	if item == 0:
-#		if x1 >= samples:
-#			continue
-#		deadlist.append(index)
-#		x1 = x1 + 1
-#	if item == 1:
-#		if x2 >= samples:
-#			continue
-#		deadlist.append(index)
-#		x2 = x2 + 1
-#	if item == 2:
-#		if x3 >= samples:
-#			continue
-#		deadlist.append(index)
-#		x3 = x3 + 1
 
+deadlist = []
 for it in range(sample_type):
 	x = 0
 	for index,item in enumerate(y_test):
