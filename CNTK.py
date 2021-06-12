@@ -5,8 +5,8 @@ import scipy.linalg
 from utilpy3 import load_cifar
 np.set_printoptions(threshold=10000)
 
-samples = 2
-sample_type =10
+samples = 20
+sample_type = 2
 
 parser = argparse.ArgumentParser(description = 'Convolutional Neural Tangent Kernel (CNTK) for CIFAR-10')
 parser.add_argument('--depth', default = 21, type = int, help = 'depth of CNTK (#conv layers + 1)')
