@@ -118,10 +118,10 @@ def xx(x):
 	S = cp.matmul(x.T, x).reshape(32, 32, 32, 32)
 	D = cp.zeros((34, 34), dtype = cp.float32)
 	#print("before",S[:][0][0][0])
-	print("before",D)
+	#print("before",D)
 	conv3check(conv_blocks, conv_threads, (S, S, D))
 	#print("after",S[:][0][0][0])
-	print("after",D)
+	#print("after",D)
 	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	if not fix:
 		T += S
