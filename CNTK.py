@@ -7,8 +7,8 @@ np.set_printoptions(threshold=10000)
 
 samples = 20
 sample_type = 2
-train_sample_type = 4
-train_samples = 40
+train_sample_type = 8
+train_samples = 20
 
 parser = argparse.ArgumentParser(description = 'Convolutional Neural Tangent Kernel (CNTK) for CIFAR-10')
 parser.add_argument('--depth', default = 21, type = int, help = 'depth of CNTK (#conv layers + 1)')
