@@ -171,7 +171,7 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 (X_train, y_train), (X_test, y_test) = load_cifar()
 deadlist = []
 
-for it in range(sample_type):
+for it in range(4):
 	x = 0
 	for index,item in enumerate(y_train):
 		if item==it:
