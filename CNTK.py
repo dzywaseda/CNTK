@@ -5,7 +5,7 @@ import scipy.linalg
 from utilpy3 import load_cifar
 np.set_printoptions(threshold=10000)
 
-samples = 20
+samples = 40
 sample_type = 2
 
 parser = argparse.ArgumentParser(description = 'Convolutional Neural Tangent Kernel (CNTK) for CIFAR-10')
