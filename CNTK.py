@@ -5,7 +5,7 @@ import scipy.linalg
 from utilpy3 import load_cifar
 np.set_printoptions(threshold=10000)
 
-samples = 80
+samples = 20
 sample_type = 2
 
 parser = argparse.ArgumentParser(description = 'Convolutional Neural Tangent Kernel (CNTK) for CIFAR-10')
@@ -171,7 +171,7 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 (X_train, y_train), (X_test, y_test) = load_cifar()
 deadlist = []
 
-for it in range(4):
+for it in range(6):
 	x = 0
 	for index,item in enumerate(y_train):
 		if item==it:
