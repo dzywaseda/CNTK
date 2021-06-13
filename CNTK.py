@@ -7,6 +7,8 @@ np.set_printoptions(threshold=10000)
 
 samples = 20
 sample_type = 2
+train_sample_type = 4
+train_samples = 20
 
 parser = argparse.ArgumentParser(description = 'Convolutional Neural Tangent Kernel (CNTK) for CIFAR-10')
 parser.add_argument('--depth', default = 21, type = int, help = 'depth of CNTK (#conv layers + 1)')
@@ -178,6 +180,16 @@ for it in range(sample_type):
 			x = x + 1
 			deadlist.append(index)
 		if x >= samples:
+			break
+			
+for it in range(train_sample_type):
+	it = it + 2
+	x = 0
+	for index,item in enumerate(y_train):
+		if item==it:
+			x = x + 1
+			deadlist.append(index)
+		if x >= train_samples:
 			break
 			
 		
