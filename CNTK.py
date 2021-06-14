@@ -7,7 +7,7 @@ np.set_printoptions(threshold=10000)
 
 samples = 100
 sample_type = 2
-train_sample_type = 8
+train_sample_type = 0
 train_samples = 20
 
 parser = argparse.ArgumentParser(description = 'Convolutional Neural Tangent Kernel (CNTK) for CIFAR-10')
