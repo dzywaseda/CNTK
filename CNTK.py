@@ -200,7 +200,7 @@ y_train = y_train[deadlist]
 
 
 deadlist = []
-for it in range(samples):
+for it in range(sample_type):
 	x = 0
 	for index,item in enumerate(y_test):
 		if item==it:
