@@ -245,6 +245,6 @@ u = H[N_train:, :N_train].dot(scipy.linalg.solve(H[:N_train, :N_train], Y_train)
 print("test accuracy:", 1.0 * np.sum(np.argmax(u, axis = 1) == y_test) / N_test)
 
 import pickle
-f = open("samples" + samples +"layer" + d +'.txt', 'wb')
+f = open("samples" + str(samples) +"layer" + str(d) +'.txt', 'wb')
 list_row = H
 pickle.dump(list_row, f)
