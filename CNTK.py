@@ -5,7 +5,7 @@ import scipy.linalg
 from utilpy3 import load_cifar
 np.set_printoptions(threshold=10000)
 
-samples = 100
+samples = 1000
 sample_type = 2
 train_sample_type = 0
 train_samples = 20
@@ -200,7 +200,7 @@ y_train = y_train[deadlist]
 
 
 deadlist = []
-for it in range(sample_type):
+for it in range(500):
 	x = 0
 	for index,item in enumerate(y_test):
 		if item==it:
