@@ -213,6 +213,7 @@ for it in range(samples):
 X_test  = X_test[deadlist,:,:,:]
 y_test = y_test[deadlist]
 
+print("X_train",X_train.shape,"X_test",X_test.shape)
 X = np.concatenate((X_train, X_test), axis = 0)
 N = X.shape[0]
 N_train = X_train.shape[0]
