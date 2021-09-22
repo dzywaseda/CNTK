@@ -150,7 +150,8 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 		T += S
 
 	for i in range(1, d - 1):
-		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i]))		
+		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i]))
+		print("layer",i, "x y",cp.mean(T),"xx yy",Lx[i], Lz[i])
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
 
