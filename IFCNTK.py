@@ -143,16 +143,24 @@ def xx(x):
 #Lx and Lz are diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
 #iLx and iLz are reciprocals of diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
 def xz(x, z, Lx, Lz, iLx, iLz):
+	IB = []
 	S = cp.matmul(x.T, z).reshape(32, 32, 32, 32)
 	conv3(conv_blocks, conv_threads, (S, S))
 	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	if not fix:
 		T += S
+	xy = []
+	xx = []
+	yy = []
 
 	for i in range(1, d - 1):
 		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i]))
-		print("start prcoessig")
-		print("layer",i, "x y",cp.mean(T),"xx yy",cp.mean(Lx[i]), cp.mean(Lz[i]),"result",np.log(1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T))),(1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T))))
+		#print("layer",i, "x y",cp.mean(T),"xx yy",cp.mean(Lx[i]), cp.mean(Lz[i]),
+		#      "result",np.log(1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T))),
+		#      (1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T))))
+		xy.append(cp.mean(T))
+		xx.append(cp.mean(Lx[i]))
+		yy.append(cp.mean(Lz[i]))
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
 
