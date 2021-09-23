@@ -151,6 +151,7 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 
 	for i in range(1, d - 1):
 		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i]))
+		print("start prcoessig")
 		print("layer",i, "x y",cp.mean(T),"xx yy",Lx[i], Lz[i],"result",np.log(1-(Lx[i] * Lz[i] / cp.mean(T) * cp.mean(T))),(1-(Lx[i] * Lz[i] / cp.mean(T) * cp.mean(T))))
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
