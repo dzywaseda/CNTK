@@ -20,6 +20,13 @@ d = args.depth
 gap = (args.gap == "yes")
 fix = (args.fix == "yes")
 
+def normalize_list(list):
+    max_value = max(list)
+    min_value = min(list)
+    for i in range(0, len(list)):
+        list[i] = (list[i] - min_value) / (max_value - min_value)
+    return list
+
 #CUDA kernel for convolution operation
 conv3 = cp.RawKernel(r'''
 extern "C" __global__
@@ -166,6 +173,13 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 		print("layer",i , ":",(1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T))))
 
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
+	xy.append(cp.mean(T))
+	xx.append(cp.mean(Lx[i]))
+	yy.append(cp.mean(Lz[i]))
+	xy1 = normalize_list(xy)
+	xx1 = normalize_list(xx)
+	yy1 = normalize_list(yy)
+	print(xy1,xx1,yy1)
 	if fix:
 		T -= S
 	#cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
