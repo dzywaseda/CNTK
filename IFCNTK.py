@@ -149,7 +149,7 @@ def xx(x):
 #Caclulate the kernel value of x and z.
 #Lx and Lz are diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
 #iLx and iLz are reciprocals of diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
-def xz(x, z, Lx, Lz, iLx, iLz):
+def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2):
 	IB = []
 	S = cp.matmul(x.T, z).reshape(32, 32, 32, 32)
 	conv3(conv_blocks, conv_threads, (S, S))
@@ -180,6 +180,8 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 	xx1 = normalize_list(xx)
 	yy1 = normalize_list(yy)
 	print(xy1,xx1,yy1)
+	if Y1==Y2:
+		res = max()
 	if fix:
 		T -= S
 	#cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
@@ -232,6 +234,7 @@ y_test = y_test[deadlist]
 
 print("X_train",X_train.shape,"X_test",X_test.shape)
 X = np.concatenate((X_train, X_test), axis = 0)
+Y = np.concatenate((y_train, y_test), axis = 0)
 N = X.shape[0]
 N_train = X_train.shape[0]
 N_test = X_test.shape[0]
@@ -252,7 +255,7 @@ for i in range(N):
 H = np.zeros((N, N), dtype = np.float32)
 for i in range(N):
 	for j in range(N):
-		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
+		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j])
 #####
 
 #Solve kernel regression.
