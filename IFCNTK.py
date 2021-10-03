@@ -181,6 +181,8 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2):
 	xx1 = normalize_list(xx)
 	yy1 = normalize_list(yy)
 	print(xy1,xx1,yy1)
+	for i in range(len(xx1)):
+		print("ok")
 	if Y1==Y2:
 		res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i])) for i in range(len(xx1))]
 		index = res.index(max(res))
