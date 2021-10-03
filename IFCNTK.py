@@ -6,7 +6,7 @@ from utilpy3 import load_cifar
 np.set_printoptions(threshold=10000)
 
 samples = 10
-sample_type = 2
+sample_type = 4
 train_sample_type = 0
 train_samples = 0
 
@@ -180,15 +180,14 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2):
 	xy1 = normalize_list(xy)
 	xx1 = normalize_list(xx)
 	yy1 = normalize_list(yy)
-	print(xy1,xx1,yy1)
-	for i in range(len(xx1)):
-		print("ok")
 	if Y1==Y2:
 		res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i]))) for i in range(len(xx1))]
 		index = res.index(max(res))
+		print(res, index)
 	else:
 		res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i]))) for i in range(len(xx1))]
 		index = res.index(min(res))
+		print(res, index)
 	if fix:
 		T -= S
 	tmp.append(T)
