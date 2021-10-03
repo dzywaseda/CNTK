@@ -184,10 +184,10 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2):
 	for i in range(len(xx1)):
 		print("ok")
 	if Y1==Y2:
-		res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i])) for i in range(len(xx1))]
+		res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i]))) for i in range(len(xx1))]
 		index = res.index(max(res))
 	else:
-		res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i])) for i in range(len(xx1))]
+		res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i]))) for i in range(len(xx1))]
 		index = res.index(min(res))
 	if fix:
 		T -= S
