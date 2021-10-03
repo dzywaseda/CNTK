@@ -6,7 +6,7 @@ from utilpy3 import load_cifar
 np.set_printoptions(threshold=10000)
 
 samples = 10
-sample_type = 2
+sample_type = 4
 train_sample_type = 0
 train_samples = 0
 
