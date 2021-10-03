@@ -150,6 +150,7 @@ def xx(x):
 #Lx and Lz are diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
 #iLx and iLz are reciprocals of diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
 def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2):
+	tmp = []
 	IB = []
 	S = cp.matmul(x.T, z).reshape(32, 32, 32, 32)
 	conv3(conv_blocks, conv_threads, (S, S))
@@ -181,12 +182,17 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2):
 	yy1 = normalize_list(yy)
 	print(xy1,xx1,yy1)
 	if Y1==Y2:
-		res = max()
+		res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i])) for i in range(len(xx1))]
+		index = res.index(max(res))
+	else:
+		res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i])) for i in range(len(xx1))]
+		index = res.index(min(res))
 	if fix:
 		T -= S
+	tmp.append(T)
 	#cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
 	#cp.mean(cp.linalg.eigh(T.reshape(1024, 1024))[0])
-	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
+	return cp.mean(tmp[index]) if gap else cp.trace(tmp[index].reshape(1024, 1024))
 
 #Load CIFAR-10.
 (X_train, y_train), (X_test, y_test) = load_cifar()
