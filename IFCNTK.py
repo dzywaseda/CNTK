@@ -186,7 +186,7 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2):
 		index = res.index(max(res))
 		print(res, index)
 	else:
-		res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i]))) for i in range(len(xx1)) if not math.isnan((1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i]))))]
+		res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i]))) for i in range(len(xx1))]
 		index = res.index(min(res))
 		print(res, index)
 	if fix:
