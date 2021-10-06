@@ -7,7 +7,7 @@ import math
 np.set_printoptions(threshold=10000)
 
 samples = 10
-sample_type = 8
+sample_type = 2
 train_sample_type = 0
 train_samples = 0
 
@@ -172,7 +172,7 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2):
 		yy.append(cp.mean(Lz[i]))
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
-		#print("layer",i , ":",(1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T))))
+		print("layer",i , ":",(1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T))))
 
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
 	xy.append(cp.mean(T))
@@ -184,11 +184,11 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2):
 	if Y1==Y2:
 		res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i]))) for i in range(len(xx1))]
 		index = res.index(max(res))
-		#print(res, index)
+		print(res, index)
 	else:
 		res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i]))) for i in range(len(xx1))]
 		index = res.index(min(res))
-		#print(res, index)
+		print(res, index)
 	if fix:
 		T -= S
 	tmp.append(T)
