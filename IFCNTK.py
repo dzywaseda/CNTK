@@ -153,6 +153,13 @@ def xx(x):
 def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2):
 	tmp = []
 	IB = []
+	x1 = np.flipud(x)
+	x2 = np.fliplr(x)
+	z1 = np.flipud(z)
+	z2 = np.fliplr(z)
+	x = x + x1 + x2
+	z = z + z1 + z2
+	
 	S = cp.matmul(x.T, z).reshape(32, 32, 32, 32)
 	conv3(conv_blocks, conv_threads, (S, S))
 	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
