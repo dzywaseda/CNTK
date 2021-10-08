@@ -179,6 +179,8 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2):
 		yy.append(cp.mean(Lz[i]))
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
+		tmp.append(T)
+		
 		#print("layer",i , ":",(1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T))))
 
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
@@ -198,7 +200,6 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2):
 		print(res, index)
 	if fix:
 		T -= S
-	tmp.append(T)
 	#cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
 	#cp.mean(cp.linalg.eigh(T.reshape(1024, 1024))[0])
 	return cp.mean(tmp[index]) if gap else cp.trace(tmp[index].reshape(1024, 1024))
