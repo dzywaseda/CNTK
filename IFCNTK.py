@@ -25,7 +25,7 @@ def normalize_list(list):
     max_value = max(list)
     min_value = min(list)
     for i in range(0, len(list)):
-        list[i] = (list[i] - min_value) / (max_value - min_value)
+        list[i] = (list[i] - min_value + 0.001) / (max_value - min_value)
     return list
 
 #CUDA kernel for convolution operation
