@@ -117,11 +117,7 @@ def xx(x):
 
 	S = cp.matmul(x.T, x).reshape(32, 32, 32, 32)
 	D = cp.zeros((34, 34), dtype = cp.float32)
-	#print("before",S[:][0][0][0])
-	#print("before",D)
 	conv3check(conv_blocks, conv_threads, (S, S, D))
-	#print("after",S[:][0][0][0])
-	#print("after",D)
 	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	if not fix:
 		T += S
@@ -138,6 +134,7 @@ def xx(x):
 		conv3(conv_blocks, conv_threads, (T, T))
 
 	L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
+	TL = cp.sqrt(cp.mean(S.reshape(1024, 1024)).reshape(32, 32))
 	iL = 1.0 / L
 	RL.append(L)
 	iRL.append(iL)
@@ -145,12 +142,12 @@ def xx(x):
 	
 	if fix:
 		T -= S
-	return RL, iRL
+	return RL, iRL, TL
 
 #Caclulate the kernel value of x and z.
 #Lx and Lz are diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
 #iLx and iLz are reciprocals of diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
-def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2):
+def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj)):
 	tmp = []
 	IB = []
 	#x1 = np.flipud(x)
@@ -260,10 +257,12 @@ print(X.shape)
 #Calculate diagonal entries.
 L = []
 iL = []
+TLs = [] 
 for i in range(N):
-	Lx, iLx = xx(X[i])	
+	Lx, iLx,TL = xx(X[i])	
 	L.append(Lx)
 	iL.append(iLx)
+	TLs,append(TL)
 
 #####Calculate kernel values.
 #####Below we provide a naive implementation using for-loops.
@@ -271,7 +270,7 @@ for i in range(N):
 H = np.zeros((N, N), dtype = np.float32)
 for i in range(N):
 	for j in range(N):
-		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j])
+		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j],TLs[i],TLs[j])
 #####
 
 #Solve kernel regression.
