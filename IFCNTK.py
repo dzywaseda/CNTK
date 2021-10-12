@@ -262,7 +262,7 @@ for i in range(N):
 	Lx, iLx,TL = xx(X[i])	
 	L.append(Lx)
 	iL.append(iLx)
-	TLs,append(TL)
+	TLs.append(TL)
 
 #####Calculate kernel values.
 #####Below we provide a naive implementation using for-loops.
