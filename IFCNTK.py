@@ -147,7 +147,7 @@ def xx(x):
 #Caclulate the kernel value of x and z.
 #Lx and Lz are diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
 #iLx and iLz are reciprocals of diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
-def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj)):
+def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 	tmp = []
 	IB = []
 	#x1 = np.flipud(x)
