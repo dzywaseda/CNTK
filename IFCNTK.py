@@ -135,6 +135,8 @@ def xx(x):
 
 	L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
 	TL = cp.sqrt(cp.average(S.reshape(1024, 1024) , axis= 0).reshape(32, 32))
+	# tempeate change , don't mind
+	L = TL
 	iL = 1.0 / L
 	RL.append(L)
 	iRL.append(iL)
