@@ -134,7 +134,7 @@ def xx(x):
 		conv3(conv_blocks, conv_threads, (T, T))
 
 	L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
-	TL = L
+	TL = cp.sqrt(cp.average(S.reshape(1024, 1024) , axis= 0).reshape(32, 32))
 	iL = 1.0 / L
 	RL.append(L)
 	iRL.append(iL)
