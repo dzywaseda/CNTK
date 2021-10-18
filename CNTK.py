@@ -5,7 +5,7 @@ import scipy.linalg
 from utilpy3 import load_cifar
 np.set_printoptions(threshold=10000)
 
-samples = 20
+samples = 10
 sample_type = 10
 train_sample_type = 0
 train_samples = 0
