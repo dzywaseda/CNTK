@@ -231,19 +231,21 @@ for it in range(train_sample_type):
 X_train = X_train[deadlist,:,:,:]
 y_train = y_train[deadlist]
 
+from random import sample
 
 deadlist = []
 for it in range(sample_type):
 	x = 0
+	tmp = []
 	for index,item in enumerate(y_test):
 		if item==it:
 			x = x + 1
-			deadlist.append(index)
+			tmp.append(index)
 		if x >= (samples*12):
+			tmp = sample(tmp, samples)
 			break
-			
-from random import sample
-deadlist = sample(deadlist, samples)
+	deadlist = deadlist + tmp		
+
 
 X_test  = X_test[deadlist,:,:,:]
 y_test = y_test[deadlist]
