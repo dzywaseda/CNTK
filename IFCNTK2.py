@@ -6,7 +6,7 @@ from utilpy3 import load_cifar
 import math
 np.set_printoptions(threshold=10000)
 
-samples = 10
+samples = 5
 sample_type = 10
 train_sample_type = 0
 train_samples = 0
@@ -241,8 +241,8 @@ for it in range(sample_type):
 		if item==it:
 			x = x + 1
 			tmp.append(index)
-		if x >= (samples*12):
-			tmp = sample(tmp, samples)
+		if x >= (samples*24):
+			tmp = sample(tmp, samples * 2)
 			break
 	deadlist = deadlist + tmp		
 
