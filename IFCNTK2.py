@@ -177,6 +177,7 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 		#print("layer",i , ":",(1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T))))
 
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
+	tmp.append(S)
 	xy.append(cp.mean(S))
 	xx.append(cp.mean(Lx[i]))
 	yy.append(cp.mean(Lz[i]))
