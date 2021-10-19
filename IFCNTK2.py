@@ -241,8 +241,8 @@ for it in range(sample_type):
 		if item==it:
 			x = x + 1
 			tmp.append(index)
-		if x >= (samples*24*5):
-			tmp = sample(tmp, samples * 20)
+		if x >= (samples*1000):
+			tmp = sample(tmp, samples * 40)
 			break
 	deadlist = deadlist + tmp		
 
