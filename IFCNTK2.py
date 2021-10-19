@@ -243,7 +243,7 @@ for it in range(sample_type):
 			break
 			
 from random import sample
-deadlist = sample(deadlist, samples*4 )
+deadlist = sample(deadlist, samples)
 
 X_test  = X_test[deadlist,:,:,:]
 y_test = y_test[deadlist]
