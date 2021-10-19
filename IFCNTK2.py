@@ -239,7 +239,7 @@ for it in range(sample_type):
 		if item==it:
 			x = x + 1
 			deadlist.append(index)
-		if x >= samples:
+		if x >= (samples*2):
 			break
 			
 			
