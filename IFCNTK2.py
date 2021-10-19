@@ -152,12 +152,6 @@ def xx(x):
 def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 	tmp = []
 	IB = []
-	#x1 = np.flipud(x)
-	#x2 = np.fliplr(x)
-	#z1 = np.flipud(z)
-	#z2 = np.fliplr(z)
-	#x = x + x1 + x2
-	#z = z + z1 + z2
 	
 	S = cp.matmul(x.T, z).reshape(32, 32, 32, 32)
 	conv3(conv_blocks, conv_threads, (S, S))
@@ -201,7 +195,10 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 		T -= S
 	#cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
 	#cp.mean(cp.linalg.eigh(T.reshape(1024, 1024))[0])
-	return cp.mean(tmp[index]) if gap else cp.trace(tmp[index].reshape(1024, 1024))
+	total = 0
+	for i,element in enumereate(res):
+		total = total + element * tmp[i]
+	return cp.mean(total) if gap else cp.trace(total.reshape(1024, 1024))
 
 #Load CIFAR-10.
 (X_train, y_train), (X_test, y_test) = load_cifar()
