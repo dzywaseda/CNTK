@@ -191,6 +191,7 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 	else:
 		res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i]))) for i in range(len(xx1))]
 		index = res.index(min(res))
+		res = [1-item for item in res]
 		print(res, index)
 	if fix:
 		T -= S
