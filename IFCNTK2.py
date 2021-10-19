@@ -239,10 +239,12 @@ for it in range(sample_type):
 		if item==it:
 			x = x + 1
 			deadlist.append(index)
-		if x >= (samples*4):
+		if x >= (samples*12):
 			break
 			
-			
+from random import sample
+deadlist = sample(deadlist, samples*4 )
+
 X_test  = X_test[deadlist,:,:,:]
 y_test = y_test[deadlist]
 
