@@ -2,18 +2,19 @@ import pickle
 import numpy as np
 import os
 
+"/content/CNTK/cifar-100-python/train"
 def load_cifar(path = "cifar-100-python"):
 	train_batches = []
 	train_labels = []
 
-	with open(os.path.join(path, "/train"), 'rb') as f:
+	with open(os.path.join(path, "train"), 'rb') as f:
 		cifar_out = pickle.load(f,encoding='latin1')
 	train_batches.append(cifar_out["data"])
 	train_labels.extend(cifar_out["labels"])
 	X_train= np.vstack(tuple(train_batches)).reshape(-1, 3, 32, 32)
 	y_train = np.array(train_labels)
 
-	with open(os.path.join(path, "/test"), 'rb') as f:
+	with open(os.path.join(path, "test"), 'rb') as f:
 		cifar_out = pickle.load(f,encoding='latin1')
 	X_test = cifar_out["data"].reshape(-1, 3, 32, 32)
 	y_test = cifar_out["labels"]
