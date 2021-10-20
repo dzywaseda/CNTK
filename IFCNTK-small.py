@@ -243,7 +243,7 @@ for it in range(sample_type):
 			tmp.append(index)
 		if x >= (samples*10):
 			tmp = tmp
-			tmp = sample(tmp, 1)
+			tmp = sample(tmp, 3)
 			break
 	deadlist = deadlist + tmp		
 
