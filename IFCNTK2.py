@@ -203,7 +203,7 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 	return cp.mean(total) if gap else cp.trace(total.reshape(1024, 1024))
 
 #Load CIFAR-10.
-(X_train, y_train), (X_test, y_test) = load_cifar()
+(X_train, y_train), (X_test, y_test) = load_cifar("cifar-100-batches-py")
 deadlist = []
 
 for it in range(sample_type):
