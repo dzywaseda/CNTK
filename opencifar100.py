@@ -10,14 +10,14 @@ def load_cifar(path = "cifar-100-python"):
 	with open(os.path.join(path, "train"), 'rb') as f:
 		cifar_out = pickle.load(f,encoding='latin1')
 	train_batches.append(cifar_out["data"])
-	train_labels.extend(cifar_out["fine"])
+	train_labels.extend(cifar_out["fine_labels"])
 	X_train= np.vstack(tuple(train_batches)).reshape(-1, 3, 32, 32)
 	y_train = np.array(train_labels)
 
 	with open(os.path.join(path, "test"), 'rb') as f:
 		cifar_out = pickle.load(f,encoding='latin1')
 	X_test = cifar_out["data"].reshape(-1, 3, 32, 32)
-	y_test = cifar_out["fine"]
+	y_test = cifar_out["fine_labels"]
 	
 	X_train = (X_train / 255.0).astype(np.float32) 
 	X_test = (X_test / 255.0).astype(np.float32) 
