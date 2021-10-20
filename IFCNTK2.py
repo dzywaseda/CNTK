@@ -199,8 +199,8 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 	#cp.mean(cp.linalg.eigh(T.reshape(1024, 1024))[0])
 	total = 0
 	for i,element in enumerate(res):
-		total = total + element * tmp[i]
-	return cp.mean(tmp[index]) if gap else cp.trace(tmp[index].reshape(1024, 1024))
+		total = total +  tmp[i]
+	return cp.mean(total) if gap else cp.trace(total.reshape(1024, 1024))
 
 #Load CIFAR-10.
 (X_train, y_train), (X_test, y_test) = load_cifar()
