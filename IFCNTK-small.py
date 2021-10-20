@@ -241,7 +241,7 @@ for it in range(sample_type):
 		if item==it:
 			x = x + 1
 			tmp.append(index)
-		if x >= (samples*1000):
+		if x >= (samples*10):
 			tmp = tmp
 			tmp = sample(tmp, 1)
 			break
