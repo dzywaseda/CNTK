@@ -243,7 +243,7 @@ for it in range(sample_type):
 			tmp.append(index)
 		if x >= (samples*1000):
 			tmp = tmp[50:]
-			tmp = sample(tmp, 50)
+			tmp = sample(tmp, 5)
 			break
 	deadlist = deadlist + tmp		
 
@@ -279,6 +279,7 @@ for i in range(N):
 		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j],TLs[i],TLs[j])
 #####
 
+print(H)
 #Solve kernel regression.
 Y_train = np.ones((N_train, 10)) * -0.1
 for i in range(N_train):
