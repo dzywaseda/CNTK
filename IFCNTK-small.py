@@ -234,7 +234,11 @@ y_train = y_train[deadlist]
 from random import sample
 
 deadlist = []
-for it in range(sample_type):
+sample_type = [i for i in range(100)]
+print(sample_type)
+sample_type = np.random.shuffle(sample_type)
+print(sample_type)
+for it in sample_type:
 	x = 0
 	tmp = []
 	for index,item in enumerate(y_test):
@@ -242,8 +246,8 @@ for it in range(sample_type):
 			x = x + 1
 			tmp.append(index)
 		if x >= (samples*100):
-			tmp = tmp[35:40]
-			#tmp = sample(tmp, 5)
+			#tmp = tmp[35:40]
+			tmp = sample(tmp, 1)
 			break
 	deadlist = deadlist + tmp		
 
