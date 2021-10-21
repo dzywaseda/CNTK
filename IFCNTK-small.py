@@ -210,12 +210,12 @@ import random
 (X_train, y_train), (X_test, y_test) = load_cifar()
 
 deadlist = []
-sample_type = [i for i in range(100)]
+sample_type = [i for i in range(sample_type)]
 print(sample_type)
 random.shuffle(sample_type)
 print(sample_type)
 
-for it in range(sample_type):
+for it in sample_type:
 	x = 0
 	for index,item in enumerate(y_train):
 		if item==it:
@@ -242,7 +242,7 @@ y_train = y_train[deadlist]
 
 
 deadlist = []
-sample_type = [i for i in range(100)]
+sample_type = [i for i in range(sample_type)]
 print(sample_type)
 random.shuffle(sample_type)
 print(sample_type)
