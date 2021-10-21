@@ -253,8 +253,8 @@ for it in sample_type:
 			x = x + 1
 			tmp.append(index)
 		if x >= (samples*100):
-			#tmp = tmp[35:40]
-			tmp = sample(tmp, 1)
+			tmp = tmp[40:45]
+			#tmp = sample(tmp, 1)
 			break
 	deadlist = deadlist + tmp		
 
