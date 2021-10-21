@@ -202,9 +202,18 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 		total = total + element * tmp[i]
 	return cp.mean(total) if gap else cp.trace(total.reshape(1024, 1024))
 
+
+from random import sample
+import random
+
 #Load CIFAR-10.
 (X_train, y_train), (X_test, y_test) = load_cifar()
+
 deadlist = []
+sample_type = [i for i in range(100)]
+print(sample_type)
+random.shuffle(sample_type)
+print(sample_type)
 
 for it in range(sample_type):
 	x = 0
@@ -231,8 +240,6 @@ for it in range(train_sample_type):
 X_train = X_train[deadlist,:,:,:]
 y_train = y_train[deadlist]
 
-from random import sample
-import random
 
 deadlist = []
 sample_type = [i for i in range(100)]
