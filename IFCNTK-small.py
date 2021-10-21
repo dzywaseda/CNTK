@@ -242,7 +242,6 @@ y_train = y_train[deadlist]
 
 
 deadlist = []
-sample_type = [i for i in range(sample_type)]
 print(sample_type)
 random.shuffle(sample_type)
 print(sample_type)
