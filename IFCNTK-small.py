@@ -232,11 +232,12 @@ X_train = X_train[deadlist,:,:,:]
 y_train = y_train[deadlist]
 
 from random import sample
+import random
 
 deadlist = []
 sample_type = [i for i in range(100)]
 print(sample_type)
-np.random.shuffle(sample_type)
+random.shuffle(sample_type)
 print(sample_type)
 for it in sample_type:
 	x = 0
