@@ -236,7 +236,7 @@ from random import sample
 deadlist = []
 sample_type = [i for i in range(100)]
 print(sample_type)
-sample_type = np.random.shuffle(sample_type)
+np.random.shuffle(sample_type)
 print(sample_type)
 for it in sample_type:
 	x = 0
