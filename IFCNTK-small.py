@@ -199,6 +199,7 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 	#cp.mean(cp.linalg.eigh(T.reshape(1024, 1024))[0])
 	total = 0
 	for i,element in enumerate(res):
+		print(total,element,tmp[i])
 		total = total + element * tmp[i]
 	return cp.mean(total) if gap else cp.trace(total.reshape(1024, 1024))
 
@@ -253,8 +254,8 @@ for it in sample_type:
 			x = x + 1
 			tmp.append(index)
 		if x >= (samples*100):
-			tmp = tmp[50:55]
-			#tmp = sample(tmp, 1)
+			#tmp = tmp[50:55]
+			tmp = sample(tmp, 1)
 			break
 	deadlist = deadlist + tmp		
 
