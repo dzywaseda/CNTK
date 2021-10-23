@@ -199,7 +199,7 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 	#cp.mean(cp.linalg.eigh(T.reshape(1024, 1024))[0])
 	total = 0
 	for i,element in enumerate(res):
-		print(total,element,tmp[i])
+		print(element)
 		total = total + element * tmp[i]
 	return cp.mean(total) if gap else cp.trace(total.reshape(1024, 1024))
 
