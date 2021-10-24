@@ -288,16 +288,13 @@ H = np.zeros((N, 1), dtype = np.float32)
 for i in range(N):
 		H[i][0] = xz(X[i], X[-1], L[i], L[-1], iL[i], iL[-1],Y[i], Y[-1],TLs[i],TLs[-1])
 #####
-print(H[0:100,:].shape)
-print(H)
-print(np.argmax(H[0:100,:]))
 
 
 #Solve kernel regression.
-#Y_train = np.ones((N_train, 2)) * -0.1
-#for i in range(N_train):#
-#	Y_train[i][y_train[i]] = 0.9
-#u = H[N_train:, :N_train].dot(scipy.linalg.solve(H[:N_train, :N_train], Y_train))
-#print(np.argmax(u, axis = 1))
-#print(y_test)
-#print("test accuracy:", 1.0 * np.sum(np.argmax(u, axis = 1) == y_test) / N_test)
+Y_train = np.ones((N_train, 100)) * -0.1
+for i in range(N_train):
+	Y_train[i][y_train[i]] = 0.9
+u = H[N_train:, :N_train].dot(scipy.linalg.solve(H[:N_train, :N_train], Y_train))
+print(np.argmax(u, axis = 1))
+print(y_test)
+print("test accuracy:", 1.0 * np.sum(np.argmax(u, axis = 1) == y_test) / N_test)
