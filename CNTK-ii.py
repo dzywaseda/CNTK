@@ -295,6 +295,7 @@ Y_train = np.ones((N_train, 100)) * -0.1
 for i in range(N_train):
 	Y_train[i][y_train[i]] = 0.9
 print(H[N_train:, :N_train])
+print(H[:N_train, :N_train].shape,H[N_train:, :N_train].shape)
 u = H[N_train:, :N_train].dot(scipy.linalg.solve(H[:N_train, :N_train], Y_train))
 print(np.argmax(u, axis = 1))
 print(y_test)
