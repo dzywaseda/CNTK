@@ -211,9 +211,9 @@ import random
 
 deadlist = []
 sample_type = [i for i in range(sample_type)]
-print(sample_type)
-random.shuffle(sample_type)
-print(sample_type)
+#print(sample_type)
+#random.shuffle(sample_type)
+#print(sample_type)
 
 for it in sample_type:
 	x = 0
@@ -242,10 +242,10 @@ y_train = y_train[deadlist]
 
 
 deadlist = []
-print(sample_type)
-random.shuffle(sample_type)
-print(sample_type)
-for it in [1,2]:
+#print(sample_type)
+#random.shuffle(sample_type)
+#print(sample_type)
+for it in [0]:
 	x = 0
 	tmp = []
 	for index,item in enumerate(y_test):
@@ -288,13 +288,14 @@ H = np.zeros((N, 1), dtype = np.float32)
 for i in range(N):
 		H[i][0] = xz(X[i], X[-1], L[i], L[-1], iL[i], iL[-1],Y[i], Y[-1],TLs[i],TLs[-1])
 #####
+print(np.argmax(H, axis = 1))
 
 #print(H)
 #Solve kernel regression.
-Y_train = np.ones((N_train, 2)) * -0.1
-for i in range(N_train):#
-	Y_train[i][y_train[i]] = 0.9
-u = H[N_train:, :N_train].dot(scipy.linalg.solve(H[:N_train, :N_train], Y_train))
-print(np.argmax(u, axis = 1))
-print(y_test)
-print("test accuracy:", 1.0 * np.sum(np.argmax(u, axis = 1) == y_test) / N_test)
+#Y_train = np.ones((N_train, 2)) * -0.1
+#for i in range(N_train):#
+#	Y_train[i][y_train[i]] = 0.9
+#u = H[N_train:, :N_train].dot(scipy.linalg.solve(H[:N_train, :N_train], Y_train))
+#print(np.argmax(u, axis = 1))
+#print(y_test)
+#print("test accuracy:", 1.0 * np.sum(np.argmax(u, axis = 1) == y_test) / N_test)
