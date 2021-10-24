@@ -253,8 +253,8 @@ for it in sample_type:
 			x = x + 1
 			tmp.append(index)
 		if x >= (samples*100):
-			tmp = tmp[50:55]
-			#tmp = sample(tmp, 1)
+			#tmp = tmp[50:55]
+			tmp = sample(tmp, 1)
 			break
 	deadlist = deadlist + tmp		
 
@@ -296,7 +296,7 @@ Y_train = np.ones((N_train, 100)) * -0.1
 for i in range(N_train):
 	Y_train[i][y_train[i]] = 0.9
 u = H[N_train:, :N_train].dot(scipy.linalg.solve(H[:N_train, :N_train], Y_train))
-print(np.argmax(u, axis = 1))
+printH[:N_train, :N_train].shape,H[N_train:, :N_train].shape)
 print(y_test)
 print("test accuracy:", 1.0 * np.sum(np.argmax(u, axis = 1) == y_test) / N_test)
 
