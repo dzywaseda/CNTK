@@ -245,7 +245,7 @@ deadlist = []
 print(sample_type)
 random.shuffle(sample_type)
 print(sample_type)
-for it in sample_type:
+for it in [0,1]:
 	x = 0
 	tmp = []
 	for index,item in enumerate(y_test):
