@@ -245,7 +245,7 @@ deadlist = []
 #print(sample_type)
 #random.shuffle(sample_type)
 #print(sample_type)
-for it in [0]:
+for it in [3]:
 	x = 0
 	tmp = []
 	for index,item in enumerate(y_test):
@@ -288,9 +288,10 @@ H = np.zeros((N, 1), dtype = np.float32)
 for i in range(N):
 		H[i][0] = xz(X[i], X[-1], L[i], L[-1], iL[i], iL[-1],Y[i], Y[-1],TLs[i],TLs[-1])
 #####
+print(H)
 print(np.argmax(H))
 
-#print(H)
+
 #Solve kernel regression.
 #Y_train = np.ones((N_train, 2)) * -0.1
 #for i in range(N_train):#
