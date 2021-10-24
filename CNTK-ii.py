@@ -289,8 +289,7 @@ for i in range(N):
 		H[i][0] = xz(X[i], X[-1], L[i], L[-1], iL[i], iL[-1],Y[i], Y[-1],TLs[i],TLs[-1])
 #####
 print(H.shape)
-print(H[0:100,:])
-print(np.argmax(H))
+print(np.argmax(H[0:100,:]))
 
 
 #Solve kernel regression.
