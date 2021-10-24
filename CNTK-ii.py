@@ -286,7 +286,7 @@ for i in range(N):
 #####Parallelize this part according to your specific computing enviroment to utilize multiple GPUs.
 H = np.zeros((N, 1), dtype = np.float32)
 for i in range(N):
-		H[i][0] = xz(X[i], X[-1], L[i], L[-1], iL[i], iL[-1],Y[i], Y[-1],TLs[i],TLs[-1])
+		H[i][1] = xz(X[i], X[-1], L[i], L[-1], iL[i], iL[-1],Y[i], Y[-1],TLs[i],TLs[-1])
 #####
 
 
