@@ -31,22 +31,22 @@ def normalize_list(list):
 #CUDA kernel for convolution operation
 conv3 = cp.RawKernel(r'''
 extern "C" __global__
-void conv3(const float s[32][32][32][32], float t[32][32][32][32])
+void conv3(const float s[84][84][84][84], float t[84][84][84][84])
 {
-	int x1 = threadIdx.x + blockIdx.x - 31;
-	int y1 = threadIdx.y + blockIdx.y - 31;
+	int x1 = threadIdx.x + blockIdx.x - 83;
+	int y1 = threadIdx.y + blockIdx.y - 83;
 	int x2 = threadIdx.x;
 	int y2 = threadIdx.y;
-	__shared__ float d[32 + 2][32 + 2];
+	__shared__ float d[84 + 2][84 + 2];
 	if (x2 == 0){
-		d[0][y2 + 1] = d[33][y2 + 1] = 0;
+		d[0][y2 + 1] = d[85][y2 + 1] = 0;
 		if (x2 == 0 && y2 == 0)
-			d[0][0] = d[0][33] = d[33][0] = d[33][33] = 0; 
+			d[0][0] = d[0][85] = d[85][0] = d[85][85] = 0; 
 	}
 	if (y2 == 0){
-		d[x2 + 1][0] = d[x2 + 1][33] = 0;
+		d[x2 + 1][0] = d[x2 + 1][85] = 0;
 	}
-	if (x1 < 0 || x1 > 31 || y1 < 0 || y1 > 31){
+	if (x1 < 0 || x1 > 83 || y1 < 0 || y1 > 83){
 		d[x2 + 1][y2 + 1] = 0;
 		return;
 	}
@@ -60,22 +60,22 @@ void conv3(const float s[32][32][32][32], float t[32][32][32][32])
 
 conv3check = cp.RawKernel(r'''
 extern "C" __global__
-void conv3check(const float s[32][32][32][32], float t[32][32][32][32], float D[32 + 2][32 + 2]) 
+void conv3check(const float s[84][84][84][84], float t[84][84][84][84], float D[84 + 2][84 + 2]) 
 {
-	int x1 = threadIdx.x + blockIdx.x - 31;
-	int y1 = threadIdx.y + blockIdx.y - 31;
+	int x1 = threadIdx.x + blockIdx.x - 83;
+	int y1 = threadIdx.y + blockIdx.y - 83;
 	int x2 = threadIdx.x;
 	int y2 = threadIdx.y;
-	__shared__ float d[32 + 2][32 + 2];
+	__shared__ float d[84 + 2][84 + 2];
 	if (x2 == 0){
-		d[0][y2 + 1] = d[33][y2 + 1] = 0;
+		d[0][y2 + 1] = d[85][y2 + 1] = 0;
 		if (x2 == 0 && y2 == 0)
-			d[0][0] = d[0][33] = d[33][0] = d[33][33] = 0; 
+			d[0][0] = d[0][85] = d[85][0] = d[85][85] = 0; 
 	}
 	if (y2 == 0){
-		d[x2 + 1][0] = d[x2 + 1][33] = 0;
+		d[x2 + 1][0] = d[x2 + 1][85] = 0;
 	}
-	if (x1 < 0 || x1 > 31 || y1 < 0 || y1 > 31){
+	if (x1 < 0 || x1 > 83 || y1 < 0 || y1 > 83){
 		d[x2 + 1][y2 + 1] = 0;
 		return;
 	}
@@ -94,7 +94,7 @@ conv_threads = (32, 32)
 #CUDA kernel for activation
 trans = cp.RawKernel(r'''
 extern "C" __global__
-void trans(float s[32][32][32][32], float t[32][32][32][32], const float l[32][32], const float r[32][32], const float il[32][32], const float ir[32][32])
+void trans(float s[84][84][84][84], float t[84][84][84][84], const float l[84][84], const float r[84][84], const float il[84][84], const float ir[84][84])
 {
 	int x1 = blockIdx.x;
 	int y1 = blockIdx.y;
@@ -115,17 +115,17 @@ def xx(x):
 	RL = [1.0, ]
 	iRL = [1.0, ]
 
-	S = cp.matmul(x.T, x).reshape(32, 32, 32, 32)
-	D = cp.zeros((34, 34), dtype = cp.float32)
+	S = cp.matmul(x.T, x).reshape(84, 84, 84, 84)
+	D = cp.zeros((84, 84), dtype = cp.float32)
 	conv3check(conv_blocks, conv_threads, (S, S, D))
-	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
+	T = cp.zeros((84, 84, 84, 84), dtype = cp.float32)
 	if not fix:
 		T += S
 
 	for i in range(1, d - 1):
 		#cupy.diag only take diagonal array output length 1024
 		#cupy.sqrt Elementwise square root
-		L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
+		L = cp.sqrt(cp.diag(S.reshape(7056, 7056)).reshape(84, 84))
 		iL = 1.0 / L
 		RL.append(L)
 		iRL.append(iL)
@@ -133,8 +133,8 @@ def xx(x):
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
 
-	L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
-	TL = cp.sqrt(cp.average(S.reshape(1024, 1024) , axis= 0).reshape(32, 32))
+	L = cp.sqrt(cp.diag(S.reshape(7056, 7056)).reshape(84, 84))
+	TL = cp.sqrt(cp.average(S.reshape(7056, 7056) , axis= 0).reshape(84, 84))
 	# tempeate change , don't mind
 	L = TL
 	iL = 1.0 / L
@@ -153,9 +153,9 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 	tmp = []
 	IB = []
 	
-	S = cp.matmul(x.T, z).reshape(32, 32, 32, 32)
+	S = cp.matmul(x.T, z).reshape(84, 84, 84, 84)
 	conv3(conv_blocks, conv_threads, (S, S))
-	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
+	T = cp.zeros((84, 84, 84, 84), dtype = cp.float32)
 	if not fix:
 		T += S
 	xy = []
@@ -200,7 +200,7 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 	total = 0
 	for i,element in enumerate(res):
 		total = total + element * tmp[i]
-	return cp.mean(total) if gap else cp.trace(total.reshape(1024, 1024))
+	return cp.mean(total) if gap else cp.trace(total.reshape(7056, 7056))
 
 
 from random import sample
@@ -253,8 +253,8 @@ for it in sample_type:
 			x = x + 1
 			tmp.append(index)
 		if x >= (samples*100):
-			tmp = tmp[50:55]
-			#tmp = sample(tmp, 1)
+			#tmp = tmp[50:55]
+			tmp = sample(tmp, 1)
 			break
 	deadlist = deadlist + tmp		
 
