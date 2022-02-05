@@ -247,6 +247,7 @@ print(sample_type)
 random.shuffle(sample_type)
 print(sample_type)
 for it in sample_type:
+	it = it + 10
 	x = 0
 	tmp = []
 	for index,item in enumerate(y_test):
