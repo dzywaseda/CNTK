@@ -283,6 +283,7 @@ y_test = y_test[deadlist]
 
 print("X_train",X_train.shape,"X_test",X_test.shape)
 X = np.concatenate((X_train, X_test), axis = 0)
+print(y_train, y_test)
 Y = np.concatenate((y_train, y_test), axis = 0)
 N = X.shape[0]
 N_train = X_train.shape[0]
