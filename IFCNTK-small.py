@@ -203,6 +203,24 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 		total = total + element * tmp[i]
 	return cp.mean(total) if gap else cp.trace(total.reshape(1024, 1024))
 
+def xzt(x, z, Lx, Lz, iLx, iLz):
+	S = cp.matmul(x.T, z).reshape(32, 32, 32, 32)
+	conv3(conv_blocks, conv_threads, (S, S))
+	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
+	if not fix:
+		T += S
+
+	for i in range(1, d - 1):
+		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i]))		
+		conv3(conv_blocks, conv_threads, (S, S))
+		conv3(conv_blocks, conv_threads, (T, T))
+
+	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))	
+
+	if fix:
+		T -= S	
+	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
+
 
 from random import sample
 import random
@@ -286,11 +304,14 @@ for i in range(N):
 #####Below we provide a naive implementation using for-loops.
 #####Parallelize this part according to your specific computing enviroment to utilize multiple GPUs.
 H = np.zeros((N, N), dtype = np.float32)
-for i in range(N):
+for i in range():
 	for j in range(N):
-		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j],TLs[i],TLs[j])
+		H[i][j] = xzt(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j],TLs[i],TLs[j])
 #####
-
+for i in range(N_train):
+	for j in range(N_train):
+		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j],TLs[i],TLs[j])
+		
 print(H)
 #Solve kernel regression.
 Y_train = np.ones((N_train, 100)) * -0.1
