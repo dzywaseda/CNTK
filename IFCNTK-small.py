@@ -225,17 +225,16 @@ for it in sample_type:
 		if x >= samples:
 			break
 			
-for it in range(train_sample_type):
-	it = it + 2
-	x = 0
-	for index,item in enumerate(y_train):
-		if item==it:
-			x = x + 1
-			deadlist.append(index)
-		if x >= train_samples:
-			break
-			
-		
+#for it in range(train_sample_type):
+#	it = it + 2
+#	x = 0
+#	for index,item in enumerate(y_train):
+#		if item==it:
+#			deadlist.append(index)
+#		if x >= train_samples:
+#			break
+#			
+#		
 		
 
 X_train = X_train[deadlist,:,:,:]
@@ -244,10 +243,9 @@ y_train = y_train[deadlist]
 
 deadlist = []
 print(sample_type)
-random.shuffle(sample_type)
+#random.shuffle(sample_type)
 print(sample_type)
 for it in sample_type:
-	it = it + 10
 	x = 0
 	tmp = []
 	for index,item in enumerate(y_test):
