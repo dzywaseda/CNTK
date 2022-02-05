@@ -260,6 +260,7 @@ for it in sample_type:
 
 
 X_test  = X_test[deadlist,:,:,:]
+random.shuffle(deadlist)
 y_test = y_test[deadlist]
 
 print("X_train",X_train.shape,"X_test",X_test.shape)
