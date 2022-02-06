@@ -167,7 +167,7 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 
 	for i in range(1, d - 1):
 		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i]))
-    T = T * (1-(cp.mean(S * S / Lx[i]) * Lz[i])))
+        	T = T * (1-(cp.mean(S * S / Lx[i]) * Lz[i]))
 		xy.append(cp.mean(T))
 		xx.append(cp.mean(Lx[i]))
 		yy.append(cp.mean(Lz[i]))
@@ -175,7 +175,7 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 		conv3(conv_blocks, conv_threads, (T, T))
 		tmp.append(S)
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
-  T = T * (1-(cp.mean(S * S / Lx[i]) * Lz[i])))
+  	T = T * (1-(cp.mean(S * S / Lx[i]) * Lz[i]))
 
 	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
 
