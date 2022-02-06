@@ -169,29 +169,20 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 
 	for i in range(1, d - 1):
 		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i]))
-		#print("layer",i, "x y",cp.mean(T),"xx yy",cp.mean(Lx[i]), cp.mean(Lz[i]),
-		#      "result",np.log(1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T))),
-		#      (1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T)))
 		xy.append(cp.mean(T))
 		xx.append(cp.mean(Lx[i]))
 		yy.append(cp.mean(Lz[i]))
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
 		tmp.append(S)
-		
-		#print("layer",i , ":",(1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T))))
-
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
 	tmp.append(S)
 	xy.append(cp.mean(S))
 	xx.append(cp.mean(Lx[i]))
 	yy.append(cp.mean(Lz[i]))
-	#xy1 = normalize_list(xy)
-	#xx1 = normalize_list(xx)
-	#yy1 = normalize_list(yy)
-	xy1 = xy
-	xx1 = xx
-	yy1 = yy
+	xy1 = normalize_list(xy)
+	xx1 = normalize_list(xx)
+	yy1 = normalize_list(yy)
 	if Y1==Y2:
 		res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i]))) for i in range(len(xx1))]
 		index = res.index(max(res))
@@ -228,29 +219,20 @@ def xz2(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 
 	for i in range(1, d - 1):
 		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i]))
-		#print("layer",i, "x y",cp.mean(T),"xx yy",cp.mean(Lx[i]), cp.mean(Lz[i]),
-		#      "result",np.log(1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T))),
-		#      (1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T)))
 		xy.append(cp.mean(T))
 		xx.append(cp.mean(Lx[i]))
 		yy.append(cp.mean(Lz[i]))
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
 		tmp.append(S)
-		
-		#print("layer",i , ":",(1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T))))
-
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
 	tmp.append(S)
 	xy.append(cp.mean(S))
 	xx.append(cp.mean(Lx[i]))
 	yy.append(cp.mean(Lz[i]))
-	#xy1 = normalize_list(xy)
-	#xx1 = normalize_list(xx)
-	#yy1 = normalize_list(yy)
-	xy1 = xy
-	xx1 = xx
-	yy1 = yy
+	xy1 = normalize_list(xy)
+	xx1 = normalize_list(xx)
+	yy1 = normalize_list(yy)
 	#if Y1==Y2:
 	#	res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i]))) for i in range(len(xx1))]
 	#	index = res.index(max(res))
