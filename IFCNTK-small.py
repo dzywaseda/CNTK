@@ -5,10 +5,11 @@ import scipy.linalg
 from opencifar100 import load_cifar
 import math
 np.set_printoptions(threshold=10000)
+from sklearn import preprocessing
 
-samples = 1
+samples = 2
 #sample_type = 100
-sample_type = 10
+sample_type = 2
 train_sample_type = 0
 train_samples = 0
 
@@ -22,12 +23,15 @@ d = args.depth
 gap = (args.gap == "yes")
 fix = (args.fix == "yes")
 
+ss = sklearn.preprocessing.StandardScaler()
+
 def normalize_list(list):
-    max_value = max(list)
-    min_value = min(list)
-    for i in range(0, len(list)):
-        list[i] = (list[i] - min_value + 0.001) / (max_value - min_value)
-    return list
+    #max_value = max(list)
+    #min_value = min(list)
+    #for i in range(0, len(list)):
+    #    list[i] = (list[i] - min_value + 0.001) / (max_value - min_value)
+    l_2d_standardization = ss.fit_transform(list)
+    return l_2d_standardization
 
 #CUDA kernel for convolution operation
 conv3 = cp.RawKernel(r'''
@@ -203,6 +207,62 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 		total = total + element * tmp[i]
 	return cp.mean(total) if gap else cp.trace(total.reshape(1024, 1024))
 
+#Caclulate the kernel value of x and z.
+#Lx and Lz are diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
+#iLx and iLz are reciprocals of diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
+def xz2(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
+	tmp = []
+	IB = []
+	
+	S = cp.matmul(x.T, z).reshape(32, 32, 32, 32)
+	conv3(conv_blocks, conv_threads, (S, S))
+	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
+	if not fix:
+		T += S
+	xy = []
+	xx = []
+	yy = []
+
+	for i in range(1, d - 1):
+		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i]))
+		#print("layer",i, "x y",cp.mean(T),"xx yy",cp.mean(Lx[i]), cp.mean(Lz[i]),
+		#      "result",np.log(1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T))),
+		#      (1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T)))
+		xy.append(cp.mean(T))
+		xx.append(cp.mean(Lx[i]))
+		yy.append(cp.mean(Lz[i]))
+		conv3(conv_blocks, conv_threads, (S, S))
+		conv3(conv_blocks, conv_threads, (T, T))
+		tmp.append(S)
+		
+		#print("layer",i , ":",(1-(cp.mean(Lx[i]) * cp.mean(Lz[i]) / cp.mean(T) * cp.mean(T))))
+
+	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
+	tmp.append(S)
+	xy.append(cp.mean(S))
+	xx.append(cp.mean(Lx[i]))
+	yy.append(cp.mean(Lz[i]))
+	xy1 = normalize_list(xy)
+	xx1 = normalize_list(xx)
+	yy1 = normalize_list(yy)
+	#if Y1==Y2:
+	#	res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i]))) for i in range(len(xx1))]
+	#	index = res.index(max(res))
+	#	print(res, index)
+	#else:
+	res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i]))) for i in range(len(xx1))]
+	index = res.index(min(res))
+	res = [1-item for item in res]
+	print(res, index)
+	if fix:
+		T -= S
+	#cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
+	#cp.mean(cp.linalg.eigh(T.reshape(1024, 1024))[0])
+	total = 0
+	for i,element in enumerate(res):
+		total = total + element * tmp[i]
+	return cp.mean(total) if gap else cp.trace(total.reshape(1024, 1024))
+
 def xzt(x, z, Lx, Lz, iLx, iLz):
 	S = cp.matmul(x.T, z).reshape(32, 32, 32, 32)
 	conv3(conv_blocks, conv_threads, (S, S))
@@ -271,7 +331,7 @@ for it in sample_type:
 			x = x + 1
 			tmp.append(index)
 		if x >= (samples*100):
-			tmp = tmp[99:100]
+			tmp = tmp[60:100]
 			#tmp = sample(tmp, 1)
 			break
 	deadlist = deadlist + tmp		
@@ -306,12 +366,16 @@ for i in range(N):
 H = np.zeros((N, N), dtype = np.float32)
 for i in range(N):
 	for j in range(N):
-		H[i][j] = xzt(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j],TLs[i],TLs[j])
+		H[i][j] = xzt(X[i], X[j], L[i], L[j], iL[i], iL[j])
 #####
+#for i in range(N):
+#	for j in range(N):
+#		H[i][j] = xz2(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j],TLs[i],TLs[j])
+
 for i in range(N_train):
 	for j in range(N_train):
 		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j],TLs[i],TLs[j])
-		
+
 print(H)
 #Solve kernel regression.
 Y_train = np.ones((N_train, 100)) * -0.1
