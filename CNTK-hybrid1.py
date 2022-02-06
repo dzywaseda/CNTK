@@ -106,6 +106,7 @@ void trans(float s[32][32][32][32], float t[32][32][32][32], const float l[32][3
 	float BS = (S * (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) + sqrtf(1.0f - min(S * S, 1.0f))) * L * R / 28.274333882308138f;
 	S = (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) / 28.274333882308138;
 	t[x1][y1][x2][y2] = T * S + BS;
+	t[x1][y1][x2][y2] = T *(S * S)/ (L * R)
 	s[x1][y1][x2][y2] = BS;
 
 }''', 'trans')
@@ -167,15 +168,10 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 
 	for i in range(1, d - 1):
 		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i]))
-        	T = T * (1-(cp.mean(S * S / Lx[i]) * Lz[i]))
-		xy.append(cp.mean(T))
-		xx.append(cp.mean(Lx[i]))
-		yy.append(cp.mean(Lz[i]))
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
 		tmp.append(S)
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
-  	T = T * (1-(cp.mean(S * S / Lx[i]) * Lz[i]))
 
 	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
 
