@@ -278,7 +278,6 @@ for it in sample_type:
 
 
 X_test  = X_test[deadlist,:,:,:]
-deadlist = random.shuffle(deadlist)
 y_test = y_test[deadlist]
 
 print("X_train",X_train.shape,"X_test",X_test.shape)
@@ -305,7 +304,7 @@ for i in range(N):
 #####Below we provide a naive implementation using for-loops.
 #####Parallelize this part according to your specific computing enviroment to utilize multiple GPUs.
 H = np.zeros((N, N), dtype = np.float32)
-for i in range():
+for i in range(N):
 	for j in range(N):
 		H[i][j] = xzt(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j],TLs[i],TLs[j])
 #####
