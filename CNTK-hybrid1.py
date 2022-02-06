@@ -91,7 +91,8 @@ void conv3check(const float s[32][32][32][32], float t[32][32][32][32], float D[
 
 conv_blocks = (63, 63)
 conv_threads = (32, 32)
-
+#	t[x1][y1][x2][y2] = T * S + BS;
+#	t[x1][y1][x2][y2] = T * (S*S)/ L*R;
 #CUDA kernel for activation
 trans = cp.RawKernel(r'''
 extern "C" __global__
@@ -105,7 +106,8 @@ void trans(float s[32][32][32][32], float t[32][32][32][32], const float l[32][3
 	S = S * iL * iR;
 	float BS = (S * (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) + sqrtf(1.0f - min(S * S, 1.0f))) * L * R / 28.274333882308138f;
 	S = (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) / 28.274333882308138;
-	t[x1][y1][x2][y2] = T * S + BS;
+
+  t[x1][y1][x2][y2] = T * (S*S)/ L*R;
 	s[x1][y1][x2][y2] = BS;
 
 }''', 'trans')
@@ -182,7 +184,8 @@ import random
 (X_train, y_train), (X_test, y_test) = load_cifar()
 
 deadlist = []
-sample_type = [i for i in range(sample_type)]
+#sample_type = [i+7 for i in range(sample_type)]
+sample_type = [1, 50]
 print(sample_type)
 random.shuffle(sample_type)
 print(sample_type)
@@ -213,7 +216,7 @@ for it in sample_type:
 			x = x + 1
 			tmp.append(index)
 		if x >= (samples*100):
-			tmp = tmp[60:100]
+			tmp = tmp[0:100]
 			#tmp = sample(tmp, 1)
 			break
 	deadlist = deadlist + tmp		
@@ -253,8 +256,8 @@ H = np.zeros((N, N), dtype = np.float32)
 #	for j in range(N):
 #		H[i][j] = xz2(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j],TLs[i],TLs[j])
 
-for i in range(N_train):
-	for j in range(N_train):
+for i in range(N):
+	for j in range(N):
 		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
 
 print(H)
