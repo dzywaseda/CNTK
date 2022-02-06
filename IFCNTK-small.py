@@ -23,7 +23,7 @@ d = args.depth
 gap = (args.gap == "yes")
 fix = (args.fix == "yes")
 
-ss = sklearn.preprocessing.StandardScaler()
+ss = preprocessing.StandardScaler()
 
 def normalize_list(list):
     #max_value = max(list)
