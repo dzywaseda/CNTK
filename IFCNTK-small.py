@@ -186,9 +186,12 @@ def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 	xy.append(cp.mean(S))
 	xx.append(cp.mean(Lx[i]))
 	yy.append(cp.mean(Lz[i]))
-	xy1 = normalize_list(xy)
-	xx1 = normalize_list(xx)
-	yy1 = normalize_list(yy)
+	#xy1 = normalize_list(xy)
+	#xx1 = normalize_list(xx)
+	#yy1 = normalize_list(yy)
+	xy1 = xy
+	xx1 = xx
+	yy1 = yy
 	if Y1==Y2:
 		res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i]))) for i in range(len(xx1))]
 		index = res.index(max(res))
@@ -242,9 +245,12 @@ def xz2(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
 	xy.append(cp.mean(S))
 	xx.append(cp.mean(Lx[i]))
 	yy.append(cp.mean(Lz[i]))
-	xy1 = normalize_list(xy)
-	xx1 = normalize_list(xx)
-	yy1 = normalize_list(yy)
+	#xy1 = normalize_list(xy)
+	#xx1 = normalize_list(xx)
+	#yy1 = normalize_list(yy)
+	xy1 = xy
+	xx1 = xx
+	yy1 = yy
 	#if Y1==Y2:
 	#	res = [(1-(cp.mean(xx1[i] * yy1[i] / xy1[i] * xy1[i]))) for i in range(len(xx1))]
 	#	index = res.index(max(res))
@@ -364,13 +370,13 @@ for i in range(N):
 #####Below we provide a naive implementation using for-loops.
 #####Parallelize this part according to your specific computing enviroment to utilize multiple GPUs.
 H = np.zeros((N, N), dtype = np.float32)
-for i in range(N):
-	for j in range(N):
-		H[i][j] = xzt(X[i], X[j], L[i], L[j], iL[i], iL[j])
-#####
 #for i in range(N):
 #	for j in range(N):
-#		H[i][j] = xz2(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j],TLs[i],TLs[j])
+#		H[i][j] = xzt(X[i], X[j], L[i], L[j], iL[i], iL[j])
+#####
+for i in range(N):
+	for j in range(N):
+		H[i][j] = xz2(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j],TLs[i],TLs[j])
 
 for i in range(N_train):
 	for j in range(N_train):
