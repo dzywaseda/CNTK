@@ -5,8 +5,8 @@ import scipy.linalg
 from opencifar100 import load_cifar
 np.set_printoptions(threshold=10000)
 
-samples = 5
-sample_type = 10
+samples = 1
+sample_type = 2
 train_sample_type = 0
 train_samples = 0
 
@@ -152,7 +152,7 @@ def xx(x):
 #Caclulate the kernel value of x and z.
 #Lx and Lz are diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
 #iLx and iLz are reciprocals of diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
-def xz(x, z, Lx, Lz, iLx, iLz, Y1, Y2, TLsi, TLsj):
+def xz(x, z, Lx, Lz, iLx, iLz):
 	tmp = []
 	IB = []
 	
@@ -237,10 +237,9 @@ L = []
 iL = []
 TLs = [] 
 for i in range(N):
-	Lx, iLx,TL = xx(X[i])	
+	Lx, iLx = xx(X[i])	
 	L.append(Lx)
 	iL.append(iLx)
-	TLs.append(TL)
 
 #####Calculate kernel values.
 #####Below we provide a naive implementation using for-loops.
@@ -256,7 +255,7 @@ H = np.zeros((N, N), dtype = np.float32)
 
 for i in range(N_train):
 	for j in range(N_train):
-		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j],TLs[i],TLs[j])
+		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
 
 print(H)
 #Solve kernel regression.
