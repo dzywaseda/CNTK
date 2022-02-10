@@ -193,13 +193,13 @@ print(sample_type)
 
 for it in sample_type:
 	x = 0
-  tmp = []
+        tmp = []
 	for index,item in enumerate(y_train):
 		if item==it:
 			x = x + 1
 			tmp.append(index)
 		if x >= 100:
-      deadlist.append(random.choice(tmp))
+			deadlist.append(random.choice(tmp))
 			break
 	
 
