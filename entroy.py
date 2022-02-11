@@ -181,10 +181,11 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 from random import sample
 import random
 
-#Load CIFAR-10.
-(X_train, y_train), (X_test, y_test) = load_cifar()
-
 def trains():
+	
+	#Load CIFAR-10.
+	(X_train, y_train), (X_test, y_test) = load_cifar()
+
 	deadlist = []
 	#sample_type = [i+7 for i in range(sample_type)]
 	sample_type = [1, 50]
