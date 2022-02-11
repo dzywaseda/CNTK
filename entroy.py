@@ -267,6 +267,8 @@ def trains():
 			H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
 
 	print(H[0:6,0:6])
+	print(np.mean(H[2:, 0:1]))
+	print(np.mean(H[2:, 1:2]))
 	#Solve kernel regression.
 	Y_train = np.ones((N_train, 100)) * -0.1
 	for i in range(N_train):
