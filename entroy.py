@@ -184,91 +184,94 @@ import random
 #Load CIFAR-10.
 (X_train, y_train), (X_test, y_test) = load_cifar()
 
-deadlist = []
-#sample_type = [i+7 for i in range(sample_type)]
-sample_type = [1, 50]
-print(sample_type)
-random.shuffle(sample_type)
-print(sample_type)
+def trains():
+	deadlist = []
+	#sample_type = [i+7 for i in range(sample_type)]
+	sample_type = [1, 50]
+	#print(sample_type)
+	random.shuffle(sample_type)
+	#print(sample_type)
 
-for it in sample_type:
-	x = 0
-        tmp = []
-	for index,item in enumerate(y_train):
-		if item==it:
-			x = x + 1
-			tmp.append(index)
-		if x >= 100:
-			deadlist.append(random.choice(tmp))
-			break
-	
-
-X_train = X_train[deadlist,:,:,:]
-y_train = y_train[deadlist]
+	for it in sample_type:
+		x = 0
+		tmp = []
+		for index,item in enumerate(y_train):
+			if item==it:
+				x = x + 1
+				tmp.append(index)
+			if x >= 100:
+				deadlist.append(random.choice(tmp))
+				break
 
 
-deadlist = []
-print(sample_type)
-#random.shuffle(sample_type)
-print(sample_type)
-for it in sample_type:
-	x = 0
-	tmp = []
-	for index,item in enumerate(y_test):
-		if item==it:
-			x = x + 1
-			tmp.append(index)
-		if x >= (samples*100):
-			tmp = tmp[0:100]
-			#tmp = sample(tmp, 1)
-			break
-	deadlist = deadlist + tmp		
+	X_train = X_train[deadlist,:,:,:]
+	y_train = y_train[deadlist]
+	print("deadlist", deadlist)
 
 
-X_test  = X_test[deadlist,:,:,:]
-y_test = y_test[deadlist]
+	deadlist = []
+	#print(sample_type)
+	#random.shuffle(sample_type)
+	#print(sample_type)
+	for it in sample_type:
+		x = 0
+		tmp = []
+		for index,item in enumerate(y_test):
+			if item==it:
+				x = x + 1
+				tmp.append(index)
+			if x >= (samples*100):
+				tmp = tmp[0:100]
+				#tmp = sample(tmp, 1)
+				break
+		deadlist = deadlist + tmp		
 
-print("X_train",X_train.shape,"X_test",X_test.shape)
-X = np.concatenate((X_train, X_test), axis = 0)
-print(y_train, y_test)
-Y = np.concatenate((y_train, y_test), axis = 0)
-N = X.shape[0]
-N_train = X_train.shape[0]
-N_test = X_test.shape[0]
-X = cp.asarray(X).reshape(-1, 3, 1024)
-print(X.shape)
 
-#Calculate diagonal entries.
-L = []
-iL = []
-TLs = [] 
-for i in range(N):
-	Lx, iLx = xx(X[i])	
-	L.append(Lx)
-	iL.append(iLx)
+	X_test  = X_test[deadlist,:,:,:]
+	y_test = y_test[deadlist]
 
-#####Calculate kernel values.
-#####Below we provide a naive implementation using for-loops.
-#####Parallelize this part according to your specific computing enviroment to utilize multiple GPUs.
-H = np.zeros((N, N), dtype = np.float32)
-#for i in range(N):
-#	for j in range(N):
-#		H[i][j] = xzt(X[i], X[j], L[i], L[j], iL[i], iL[j])
-#####
-#for i in range(N):
-#	for j in range(N):
-#		H[i][j] = xz2(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j],TLs[i],TLs[j])
+	#print("X_train",X_train.shape,"X_test",X_test.shape)
+	X = np.concatenate((X_train, X_test), axis = 0)
+	#print(y_train, y_test)
+	Y = np.concatenate((y_train, y_test), axis = 0)
+	N = X.shape[0]
+	N_train = X_train.shape[0]
+	N_test = X_test.shape[0]
+	X = cp.asarray(X).reshape(-1, 3, 1024)
+	#print(X.shape)
 
-for i in range(N):
-	for j in range(N):
-		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
+	#Calculate diagonal entries.
+	L = []
+	iL = []
+	TLs = [] 
+	for i in range(N):
+		Lx, iLx = xx(X[i])	
+		L.append(Lx)
+		iL.append(iLx)
 
-print(H)
-#Solve kernel regression.
-Y_train = np.ones((N_train, 100)) * -0.1
-for i in range(N_train):
-	Y_train[i][y_train[i]] = 0.9
-u = H[N_train:, :N_train].dot(scipy.linalg.solve(H[:N_train, :N_train], Y_train))
-print(H[:N_train, :N_train].shape,H[N_train:, :N_train].shape)
-print(y_test)
-print("test accuracy:", 1.0 * np.sum(np.argmax(u, axis = 1) == y_test) / N_test)
+	#####Calculate kernel values.
+	#####Below we provide a naive implementation using for-loops.
+	#####Parallelize this part according to your specific computing enviroment to utilize multiple GPUs.
+	H = np.zeros((N, N), dtype = np.float32)
+	#for i in range(N):
+	#	for j in range(N):
+	#		H[i][j] = xzt(X[i], X[j], L[i], L[j], iL[i], iL[j])
+	#####
+	#for i in range(N):
+	#	for j in range(N):
+	#		H[i][j] = xz2(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j],TLs[i],TLs[j])
+
+	for i in range(N):
+		for j in range(N):
+			H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
+
+	print(H[0:1,0:1])
+	#Solve kernel regression.
+	Y_train = np.ones((N_train, 100)) * -0.1
+	for i in range(N_train):
+		Y_train[i][y_train[i]] = 0.9
+	u = H[N_train:, :N_train].dot(scipy.linalg.solve(H[:N_train, :N_train], Y_train))
+	#print(H[:N_train, :N_train].shape,H[N_train:, :N_train].shape)
+	print("test accuracy:", 1.0 * np.sum(np.argmax(u, axis = 1) == y_test) / N_test)
+
+trains()
