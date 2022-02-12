@@ -200,7 +200,7 @@ def trains():
 			if item==it:
 				x = x + 1
 				tmp.append(index)
-			if x >= 100:
+			if x >= 500:
 				deadlist.append(random.choice(tmp))
 				break
 
