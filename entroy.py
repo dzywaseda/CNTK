@@ -276,6 +276,7 @@ def trains():
 		Y_train[i][y_train[i]] = 0.9
 	u = H[N_train:, :N_train].dot(scipy.linalg.solve(H[:N_train, :N_train], Y_train))
 	#print(H[:N_train, :N_train].shape,H[N_train:, :N_train].shape)
-	print("test accuracy:", 1.0 * np.sum(np.argmax(u, axis = 1) == y_test) / N_test)
+	print("test accuracy:", 1.0 * np.sum(np.argmax(u, axis = 1) == y_test[:100]) / N_test / 2)
+	print("test accuracy:", 1.0 * np.sum(np.argmax(u, axis = 1) == y_test[100:]) / N_test / 2)
 
 trains()
