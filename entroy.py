@@ -270,7 +270,7 @@ def trains():
 	print("sum var and std")
 	h = 0
 	for i in range(100):
-		h = h + np.sqrt((H[2+i,0]  * H[2+i,0]) / H[0,0] * H[2+i, 2]))
+		h = h + np.sqrt((H[2+i,0]  * H[2+i,0]) / (H[0,0] * H[2+i, 2]))
 	print("average value exp1", h/100)
 
 	print(np.mean(H[2:102, 0:1]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
