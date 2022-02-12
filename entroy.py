@@ -274,6 +274,11 @@ def trains():
 	print("average value exp1", h/100)
 
 	print(np.mean(H[2:102, 0:1]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
+	h = 0
+	for i in range(100):
+		h = h + H[102+i,0] / (H[1,1] * H[102+i, 2])
+	print("average value exp2", h/100)
+	
 	print(np.mean(H[102:, 0:1]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
 	print(np.mean(H[2:102, 1:2]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
 	print(np.mean(H[102:,  1:2]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
