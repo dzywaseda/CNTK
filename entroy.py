@@ -280,5 +280,5 @@ def trains():
 	print("test accuracy:", 1.0 * np.sum(np.argmax(u[:100], axis = 1) == y_test[:100]) / N_test * 2)
 	print("test accuracy:", 1.0 * np.sum(np.argmax(u[100:], axis = 1) == y_test[100:]) / N_test * 2)
 
-for i in range(5):
+for i in range(10):
 	trains()
