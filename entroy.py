@@ -144,6 +144,7 @@ def xx(x):
 
 	#L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
 	L = cp.sort(S.reshape(1024 * 1024))
+	print(L[32*32:].shape)
 	L = L[32*32:]
 	print("L",L.shape)
 	L = L.reshape(32, 32)
