@@ -144,7 +144,7 @@ def xx(x):
 
 	L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
 	#test
-	L = cp.graient(L)
+	L = cp.gradient(L)
 	iL = 1.0 / L
 	RL.append(L)
 	iRL.append(iL)
