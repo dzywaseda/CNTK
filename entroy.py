@@ -142,9 +142,8 @@ def xx(x):
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
 
-	L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
-	#test
-	L = cp.gradient(L)
+	#L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
+	L = cp.sort(S.reshape(1024 * 1024))[32*32:].reshape(32, 32)
 	iL = 1.0 / L
 	RL.append(L)
 	iRL.append(iL)
