@@ -144,10 +144,12 @@ def xx(x):
 
 	#L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
 	L = cp.sort(S.reshape(1024 * 1024))
+	L = cp.asnumpy(L)
 	print(L[32*32:].shape)
 	L = L[32*32:]
 	print("L",L.shape)
 	L = L.reshape(32, 32)
+	L = cp.asarray(L)
 	iL = 1.0 / L
 	RL.append(L)
 	iRL.append(iL)
