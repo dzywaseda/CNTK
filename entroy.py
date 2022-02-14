@@ -108,7 +108,7 @@ void trans(float s[32][32][32][32], float t[32][32][32][32], const float l[32][3
 	float BS = (S * (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) + sqrtf(1.0f - min(S * S, 1.0f))) * L * R / 28.274333882308138f;
 	S = (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) / 28.274333882308138;
 
-        t[x1][y1][x2][y2] = T * (S*S)/(L*R);
+        t[x1][y1][x2][y2] = T * (S*S)/(L*R) + BS/S;
 	s[x1][y1][x2][y2] = BS;
 
 }''', 'trans')
@@ -142,14 +142,7 @@ def xx(x):
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
 
-	#L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
-	L = cp.sort(S.reshape(1024 * 1024))
-	L = cp.asnumpy(L)
-	print(L[32*32:].shape)
-	L = L[32*32:]
-	print("L",L.shape)
-	L = L.reshape(32, 32)
-	L = cp.asarray(L)
+	L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
 	iL = 1.0 / L
 	RL.append(L)
 	iRL.append(iL)
