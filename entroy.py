@@ -108,7 +108,7 @@ void trans(float s[32][32][32][32], float t[32][32][32][32], const float l[32][3
 	float BS = (S * (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) + sqrtf(1.0f - min(S * S, 1.0f))) * L * R / 28.274333882308138f;
 	S = (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) / 28.274333882308138;
 
-        t[x1][y1][x2][y2] = T * (S*S)/(L*R) + BS/S;
+        t[x1][y1][x2][y2] = T * S + BS;
 	s[x1][y1][x2][y2] = BS;
 
 }''', 'trans')
@@ -156,9 +156,6 @@ def xx(x):
 #Lx and Lz are diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
 #iLx and iLz are reciprocals of diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
 def xz(x, z, Lx, Lz, iLx, iLz):
-	tmp = []
-	IB = []
-	
 	S = cp.matmul(x.T, z).reshape(32, 32, 32, 32)
 	conv3(conv_blocks, conv_threads, (S, S))
 	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
@@ -167,15 +164,17 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 	xy = []
 	xx = []
 	yy = []
+	tmp = T
 
 	for i in range(1, d - 1):
 		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i]))
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
-		tmp.append(S)
+		tmp = tmp + T
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
+	tmp = tmp + T
 
-	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
+	return cp.mean(tmp) if gap else cp.trace(tmp.reshape(1024, 1024))
 
 
 from random import sample
