@@ -94,6 +94,10 @@ conv_blocks = (63, 63)
 conv_threads = (32, 32)
 #	t[x1][y1][x2][y2] = T * S + BS;
 #	t[x1][y1][x2][y2] = T * (S*S)/ L*R;
+#	S = S * iL * iR;
+#	float BS = (S * (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) + sqrtf(1.0f - min(S * S, 1.0f))) * L * R / 28.274333882308138f;
+#	S = (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) / 28.274333882308138;
+
 #CUDA kernel for activation
 trans = cp.RawKernel(r'''
 extern "C" __global__
@@ -104,12 +108,11 @@ void trans(float s[32][32][32][32], float t[32][32][32][32], const float l[32][3
 	int x2 = threadIdx.x + ((blockIdx.z >> 2) << 3);
 	int y2 = threadIdx.y + ((blockIdx.z & 3) << 3);
 	float S = s[x1][y1][x2][y2], T = t[x1][y1][x2][y2], L = l[x1][y1], R = r[x2][y2], iL = il[x1][y1], iR = ir[x2][y2];
-	S = S * iL * iR;
-	float BS = (S * (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) + sqrtf(1.0f - min(S * S, 1.0f))) * L * R / 28.274333882308138f;
+	float BS = (S * (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) + sqrtf(1.0f - min(S * S, 1.0f)))  / 28.274333882308138f;
 	S = (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) / 28.274333882308138;
 
-        t[x1][y1][x2][y2] = T * S + BS;
-	s[x1][y1][x2][y2] = BS;
+        t[x1][y1][x2][y2] = T * (S*S)/ L*R + BS;
+	s[x1][y1][x2][y2] = BS;	
 
 }''', 'trans')
 trans_blocks = (32, 32, 16)
@@ -291,5 +294,5 @@ def trains():
 	print("test accuracy:", 1.0 * np.sum(np.argmax(u[:100], axis = 1) == y_test[:100]) / N_test * 2)
 	print("test accuracy:", 1.0 * np.sum(np.argmax(u[100:], axis = 1) == y_test[100:]) / N_test * 2)
 
-for i in range(10):
+for i in range(1):
 	trains()
