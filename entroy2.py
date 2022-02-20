@@ -178,7 +178,7 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 		conv3(conv_blocks, conv_threads, (T, T))
 
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
-	print("atts", atts)
+	#print("atts", atts)
 	sums =  cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	for index, item in enumerate(atts):
 		sums = sums + atts[index] * ts[index]
