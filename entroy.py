@@ -112,7 +112,7 @@ void trans(float s[32][32][32][32], float t[32][32][32][32], const float l[32][3
 	float BS = (S * (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) + sqrtf(1.0f - min(S * S, 1.0f))) * L * R / 28.274333882308138f;
 	S = (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) / 28.274333882308138;
         t[x1][y1][x2][y2] = T * S + BS;
-	s[x1][y1][x2][y2] = BS * S*S/L*R;
+	s[x1][y1][x2][y2] = BS;
 
 }''', 'trans')
 trans_blocks = (32, 32, 16)
@@ -205,7 +205,7 @@ def trains():
 				deadlist.append(random.choice(tmp))
 				break
 
-
+	deadlist = [9884, 2063]
 	X_train = X_train[deadlist,:,:,:]
 	y_train = y_train[deadlist]
 	print("deadlist", deadlist)
