@@ -111,8 +111,8 @@ void trans(float s[32][32][32][32], float t[32][32][32][32], const float l[32][3
         S = S * iL * iR;
 	float BS = (S * (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) + sqrtf(1.0f - min(S * S, 1.0f))) * L * R / 28.274333882308138f;
 	S = (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) / 28.274333882308138;
-        t[x1][y1][x2][y2] = T * S + BS * log(1- S*S/L*R);
-	s[x1][y1][x2][y2] = BS * log(1- S*S/L*R);
+        t[x1][y1][x2][y2] = T * S + BS;
+	s[x1][y1][x2][y2] = BS * S*S/L*R;
 
 }''', 'trans')
 trans_blocks = (32, 32, 16)
@@ -172,7 +172,7 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i]))
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
-		tmp = tmp + T
+		#tmp = tmp + T
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
 	#tmp = tmp + T
 
