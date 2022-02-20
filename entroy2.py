@@ -168,17 +168,22 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 	xx = []
 	yy = []
   
-  atts = []
+	atts = []
+	ts = []
 	for i in range(1, d - 1):
 		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i]))
-    atts[Lx[i] * Lz[i]]
+		ts.append(T)
+		atts.append(Lx[i] * Lz[i])
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
-		#tmp = tmp + T
+
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
 	print("atts", atts)
+	sums =  cp.zeros((32, 32, 32, 32), dtype = cp.float32)
+	for index, item in enumerate(atts):
+		sums = sums + atts[index] * ts[index]
   
-	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
+	return cp.mean(sums) if gap else cp.trace(sums.reshape(1024, 1024))
 
 
 from random import sample
