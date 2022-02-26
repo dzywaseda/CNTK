@@ -175,6 +175,7 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 		conv3(conv_blocks, conv_threads, (T, T))
 		#tmp = tmp + T
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
+	print("things from last layers", cp.mean(Lx[-1]),cp.mean(Lz[-1]))
 	#tmp = tmp + T
 
 	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
