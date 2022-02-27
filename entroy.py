@@ -107,7 +107,7 @@ void trans(float s[32][32][32][32], float t[32][32][32][32], const float l[32][3
 	int y1 = blockIdx.y;
 	int x2 = threadIdx.x + ((blockIdx.z >> 2) << 3);
 	int y2 = threadIdx.y + ((blockIdx.z & 3) << 3);
-	float S = s[x1][y1][x2][y2], T = t[x1][y1][x2][y2], L = l[x1][y1], R = r[x2][y2], iL = il[x1][y1], iR = ir[x2][y2];
+	float S = s[x1][y1][x2][y2], T = t[x1][y1][x2][y2], L = sqrtf(l[x1][y1]), R = sqrtf(r[x2][y2]), iL = sqrtf(il[x1][y1]), iR = sqrtf(ir[x2][y2]);
         S = S * iL * iR;
 	float BS = (S * (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) + sqrtf(1.0f - min(S * S, 1.0f))) * L * R / 28.274333882308138f;
 	S = (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) / 28.274333882308138;
@@ -139,10 +139,11 @@ def xx(x):
 		#cupy.sqrt Elementwise square root
 		L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
 		D = cp.zeros((32, 32), dtype = cp.float32)
+		S = S.reshape(1024, 1024)
 		for x in range(32):
 			for y in range(32):
-				maxvalue = S[x*32:x;(x+1):32,y*32,(y+1)*32].max
-				D[x,y]   = maxvalue
+				maxvalue = cp.amax(S[x*32:(x+1)*32,y*32:(y+1)*32])
+				D[x,y] = np.sqrt(maxvalue)
 		L = D
 		iL = 1.0 / L
 		RL.append(L)
@@ -181,7 +182,7 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 		conv3(conv_blocks, conv_threads, (T, T))
 		#tmp = tmp + T
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
-	print("things from last layers", cp.mean(Lx[-1]),cp.mean(Lz[-1]))
+	#print("things from last layers", cp.mean(Lx[-1]),cp.mean(Lz[-1]))
 	#tmp = tmp + T
 
 	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
