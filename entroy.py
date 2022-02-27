@@ -138,6 +138,12 @@ def xx(x):
 		#cupy.diag only take diagonal array output length 1024
 		#cupy.sqrt Elementwise square root
 		L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
+		D = cp.zeros((32, 32), dtype = cp.float32)
+		for x in range(32):
+			for y in range(32):
+				maxvalue = S[x*32:x;(x+1):32,y*32,(y+1)*32].max
+				D[x,y]   = maxvalue
+		S = D
 		iL = 1.0 / L
 		RL.append(L)
 		iRL.append(iL)
@@ -148,7 +154,7 @@ def xx(x):
 	L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
 	iL = 1.0 / L
 	RL.append(L)
-	print("RL", RL)
+
 	iRL.append(iL)
 	trans(trans_blocks, trans_threads, (S, T, L, L, iL, iL))	
 	
