@@ -143,7 +143,7 @@ def xx(x):
 			for y in range(32):
 				maxvalue = S[x*32:x;(x+1):32,y*32,(y+1)*32].max
 				D[x,y]   = maxvalue
-		S = D
+		L = D
 		iL = 1.0 / L
 		RL.append(L)
 		iRL.append(iL)
