@@ -180,12 +180,8 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 		conv3(conv_blocks, conv_threads, (T, T))
 
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
-	#print("atts", atts)
-	sums =  cp.zeros((32, 32, 32, 32), dtype = cp.float32)
-	for index, item in enumerate(atts):
-		sums = sums + atts[index] * ts[index]
-  
-	return cp.mean(sums) if gap else cp.trace(sums.reshape(1024, 1024))
+
+	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
 
 
 from random import sample
@@ -198,7 +194,7 @@ def trains():
 
 	deadlist = []
 	#sample_type = [i+7 for i in range(sample_type)]
-	sample_type = [1, 50]
+	sample_type = [1, 11, 21,31,41,51,61,71,81,91]
 	#print(sample_type)
 	random.shuffle(sample_type)
 	#print(sample_type)
@@ -214,7 +210,7 @@ def trains():
 				deadlist.append(random.choice(tmp))
 				break
 
-	deadlist = [9884, 2063]
+	#deadlist = [9884, 2063]
 	X_train = X_train[deadlist,:,:,:]
 	y_train = y_train[deadlist]
 	print("deadlist", deadlist)
@@ -224,7 +220,7 @@ def trains():
 	#print(sample_type)
 	#random.shuffle(sample_type)
 	#print(sample_type)
-	for it in sample_type:
+	for it in [1,51]:
 		x = 0
 		tmp = []
 		for index,item in enumerate(y_test):
@@ -277,21 +273,8 @@ def trains():
 			H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
 
 	print(H[0:6,0:6])
-	print("sum var and std")
-	h = 0
-	for i in range(100):
-		h = h + (H[102+i,0]  * H[102+i,0]) / (H[0,0] * H[102+i, 102+i])
-	print("average value exp1", h/100)
 
-	print(np.mean(H[2:102, 0:1]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
-	h = 0
-	for i in range(100):
-		h = h + (H[2+i,1] * H[2+i,1])  / (H[1,1] * H[2+i, 2+i])
-	print("average value exp2", h/100)
-	
-	print(np.mean(H[102:, 0:1]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
-	print(np.mean(H[2:102, 1:2]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
-	print(np.mean(H[102:,  1:2]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
+
 	#Solve kernel regression.
 	Y_train = np.ones((N_train, 100)) * -0.1
 	for i in range(N_train):
@@ -299,8 +282,6 @@ def trains():
 	u = H[N_train:, :N_train].dot(scipy.linalg.solve(H[:N_train, :N_train], Y_train))
 	#print(H[:N_train, :N_train].shape,H[N_train:, :N_train].shape)
 	print("test accuracy:", 1.0 * np.sum(np.argmax(u, axis = 1) == y_test) / N_test)
-	print("test accuracy:", 1.0 * np.sum(np.argmax(u[:100], axis = 1) == y_test[:100]) / N_test * 2)
-	print("test accuracy:", 1.0 * np.sum(np.argmax(u[100:], axis = 1) == y_test[100:]) / N_test * 2)
 
 for i in range(1):
 	trains()
