@@ -198,7 +198,7 @@ def trains():
 
 	deadlist = []
 	#sample_type = [i+7 for i in range(sample_type)]
-	sample_type = [1, 50]
+	sample_type = [1, 12, 22, 32, 42, 52 , 62, 72, 82, 92]
 	#print(sample_type)
 	random.shuffle(sample_type)
 	#print(sample_type)
@@ -214,7 +214,7 @@ def trains():
 				deadlist.append(random.choice(tmp))
 				break
 
-	deadlist = [9884, 2063]
+	#deadlist = [9884, 2063]
 	X_train = X_train[deadlist,:,:,:]
 	y_train = y_train[deadlist]
 	print("deadlist", deadlist)
@@ -224,6 +224,7 @@ def trains():
 	#print(sample_type)
 	#random.shuffle(sample_type)
 	#print(sample_type)
+	sample_type = [1]
 	for it in sample_type:
 		x = 0
 		tmp = []
@@ -276,7 +277,7 @@ def trains():
 		for j in range(N):
 			H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
 
-	print(H[0:6,0:6])
+	#print(H[0:6,0:6])
 	print("sum var and std")
 	h = 0
 	for i in range(100):
