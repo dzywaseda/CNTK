@@ -280,19 +280,19 @@ def trains():
 	#print(H[0:6,0:6])
 	print("sum var and std")
 	h = 0
-	for i in range(100):
-		h = h + (H[102+i,0]  * H[102+i,0]) / (H[0,0] * H[102+i, 102+i])
-	print("average value exp1", h/100)
+	#for i in range(100):
+	#	h = h + (H[102+i,0]  * H[102+i,0]) / (H[0,0] * H[102+i, 102+i])
+	#print("average value exp1", h/100)
 
-	print(np.mean(H[2:102, 0:1]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
-	h = 0
-	for i in range(100):
-		h = h + (H[2+i,1] * H[2+i,1])  / (H[1,1] * H[2+i, 2+i])
-	print("average value exp2", h/100)
+	#print(np.mean(H[2:102, 0:1]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
+	#h = 0
+	#for i in range(100):
+	#	h = h + (H[2+i,1] * H[2+i,1])  / (H[1,1] * H[2+i, 2+i])
+	#print("average value exp2", h/100)
 	
-	print(np.mean(H[102:, 0:1]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
-	print(np.mean(H[2:102, 1:2]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
-	print(np.mean(H[102:,  1:2]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
+	#print(np.mean(H[102:, 0:1]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
+	#print(np.mean(H[2:102, 1:2]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
+	#print(np.mean(H[102:,  1:2]), np.var(H[2:, 0:1]), np.std(H[2:, 0:1]))
 	#Solve kernel regression.
 	Y_train = np.ones((N_train, 100)) * -0.1
 	for i in range(N_train):
