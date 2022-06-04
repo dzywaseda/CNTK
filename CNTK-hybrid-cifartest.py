@@ -2,11 +2,11 @@ import cupy as cp
 import numpy as np
 import argparse
 import scipy.linalg
-from opencifar100 import load_cifar
+from utilpy3 import load_cifar
 np.set_printoptions(threshold=10000)
 
-samples = 1
-sample_type = 2
+samples = 5
+sample_type = 10
 train_sample_type = 0
 train_samples = 0
 
@@ -29,7 +29,6 @@ void conv3(const float s[32][32][32][32], float t[32][32][32][32])
 	int y1 = threadIdx.y + blockIdx.y - 31;
 	int x2 = threadIdx.x;
 	int y2 = threadIdx.y;
-
 	__shared__ float d[32 + 2][32 + 2];
 	if (x2 == 0){
 		d[0][y2 + 1] = d[33][y2 + 1] = 0;
@@ -39,7 +38,6 @@ void conv3(const float s[32][32][32][32], float t[32][32][32][32])
 	if (y2 == 0){
 		d[x2 + 1][0] = d[x2 + 1][33] = 0;
 	}
-
 	if (x1 < 0 || x1 > 31 || y1 < 0 || y1 > 31){
 		d[x2 + 1][y2 + 1] = 0;
 		return;
@@ -47,11 +45,9 @@ void conv3(const float s[32][32][32][32], float t[32][32][32][32])
 	else
 		d[x2 + 1][y2 + 1] = s[x1][y1][x2][y2];
 	__syncthreads();
-
 	t[x1][y1][x2][y2] = d[x2][y2] + d[x2][y2 + 1] + d[x2][y2 + 2]
 					  + d[x2 + 1][y2] + d[x2 + 1][y2 + 1] + d[x2 + 1][y2 + 2]
 					  + d[x2 + 2][y2] + d[x2 + 2][y2 + 1] + d[x2 + 2][y2 + 2];
-
 }''', 'conv3')
 
 conv3check = cp.RawKernel(r'''
@@ -62,7 +58,6 @@ void conv3check(const float s[32][32][32][32], float t[32][32][32][32], float D[
 	int y1 = threadIdx.y + blockIdx.y - 31;
 	int x2 = threadIdx.x;
 	int y2 = threadIdx.y;
-
 	__shared__ float d[32 + 2][32 + 2];
 	if (x2 == 0){
 		d[0][y2 + 1] = d[33][y2 + 1] = 0;
@@ -72,7 +67,6 @@ void conv3check(const float s[32][32][32][32], float t[32][32][32][32], float D[
 	if (y2 == 0){
 		d[x2 + 1][0] = d[x2 + 1][33] = 0;
 	}
-
 	if (x1 < 0 || x1 > 31 || y1 < 0 || y1 > 31){
 		d[x2 + 1][y2 + 1] = 0;
 		return;
@@ -81,22 +75,18 @@ void conv3check(const float s[32][32][32][32], float t[32][32][32][32], float D[
 		d[x2 + 1][y2 + 1] = s[x1][y1][x2][y2];
 	  D[x2 + 2][y2 + 2] = s[x1][y1][x2][y2];
 	__syncthreads();
-
-
 	t[x1][y1][x2][y2] = d[x2][y2] + d[x2][y2 + 1] + d[x2][y2 + 2]
 					  + d[x2 + 1][y2] + d[x2 + 1][y2 + 1] + d[x2 + 1][y2 + 2]
 					  + d[x2 + 2][y2] + d[x2 + 2][y2 + 1] + d[x2 + 2][y2 + 2];
-
 }''', 'conv3check')
 
 conv_blocks = (63, 63)
 conv_threads = (32, 32)
-#	t[x1][y1][x2][y2] = T * S + BS;
-#	t[x1][y1][x2][y2] = T * (S*S)/ L*R;
+
 #CUDA kernel for activation
 trans = cp.RawKernel(r'''
 extern "C" __global__
-void trans(float s[32][32][32][32], float t[32][32][32][32], const float l[32][32], const float r[32][32], const float il[32][32], const float ir[32][32])
+void trans(float s[32][32][32][32], float t[32][32][32][32], const float l[32][32], const float r[32][32], const float il[32][32], const float ir[32][32], float bs[32][32][32][32],  float ss[32][32][32][32], )
 {
 	int x1 = blockIdx.x;
 	int y1 = blockIdx.y;
@@ -106,10 +96,10 @@ void trans(float s[32][32][32][32], float t[32][32][32][32], const float l[32][3
 	S = S * iL * iR;
 	float BS = (S * (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) + sqrtf(1.0f - min(S * S, 1.0f))) * L * R / 28.274333882308138f;
 	S = (3.141592654f - acosf(max(min(S, 1.0f), -1.0f))) / 28.274333882308138;
-
-  t[x1][y1][x2][y2] = T * (S*S)/ L*R;
+	t[x1][y1][x2][y2] = T * S + BS;
 	s[x1][y1][x2][y2] = BS;
-
+	bs[x1][y1][x2][y2] = BS;
+	ss[x1][y1][x2][y2] = S;
 }''', 'trans')
 trans_blocks = (32, 32, 16)
 trans_threads = (8, 8)
@@ -127,6 +117,8 @@ def xx(x):
 	#print("after",S[:][0][0][0])
 	#print("after",D)
 	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
+	bs = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
+	ss = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	if not fix:
 		T += S
 
@@ -137,7 +129,7 @@ def xx(x):
 		iL = 1.0 / L
 		RL.append(L)
 		iRL.append(iL)
-		trans(trans_blocks, trans_threads, (S, T, L, L, iL, iL))
+		trans(trans_blocks, trans_threads, (S, T, L, L, iL, iL, bs, ss))
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
 
@@ -145,7 +137,7 @@ def xx(x):
 	iL = 1.0 / L
 	RL.append(L)
 	iRL.append(iL)
-	trans(trans_blocks, trans_threads, (S, T, L, L, iL, iL))	
+	trans(trans_blocks, trans_threads, (S, T, L, L, iL, iL, bs, ss))	
 	
 	if fix:
 		T -= S
@@ -155,42 +147,30 @@ def xx(x):
 #Lx and Lz are diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
 #iLx and iLz are reciprocals of diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
 def xz(x, z, Lx, Lz, iLx, iLz):
-	tmp = []
-	IB = []
-	
 	S = cp.matmul(x.T, z).reshape(32, 32, 32, 32)
 	conv3(conv_blocks, conv_threads, (S, S))
 	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
+	bs = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
+	ss = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	if not fix:
 		T += S
-	xy = []
-	xx = []
-	yy = []
 
 	for i in range(1, d - 1):
-		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i]))
+		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i], bs, ss))		
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
-		tmp.append(S)
-	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
 
-	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
-
-
-from random import sample
-import random
+	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1], bs, ss))
+	if fix:
+		T -= S
+	#cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
+	return cp.mean(cp.linalg.eigh(T.reshape(1024, 1024))[0])
 
 #Load CIFAR-10.
 (X_train, y_train), (X_test, y_test) = load_cifar()
-
 deadlist = []
-#sample_type = [i+7 for i in range(sample_type)]
-sample_type = [1, 50]
-print(sample_type)
-random.shuffle(sample_type)
-print(sample_type)
 
-for it in sample_type:
+for it in range(sample_type):
 	x = 0
 	for index,item in enumerate(y_train):
 		if item==it:
@@ -198,37 +178,40 @@ for it in sample_type:
 			deadlist.append(index)
 		if x >= samples:
 			break
-	
+			
+for it in range(train_sample_type):
+	it = it + 2
+	x = 0
+	for index,item in enumerate(y_train):
+		if item==it:
+			x = x + 1
+			deadlist.append(index)
+		if x >= train_samples:
+			break
+			
+		
+		
 
 X_train = X_train[deadlist,:,:,:]
 y_train = y_train[deadlist]
 
 
 deadlist = []
-print(sample_type)
-#random.shuffle(sample_type)
-print(sample_type)
-for it in sample_type:
+for it in range(sample_type):
 	x = 0
-	tmp = []
 	for index,item in enumerate(y_test):
 		if item==it:
 			x = x + 1
-			tmp.append(index)
-		if x >= (samples*100):
-			tmp = tmp[0:100]
-			#tmp = sample(tmp, 1)
+			deadlist.append(index)
+		if x >= (samples*4):
 			break
-	deadlist = deadlist + tmp		
-
-
+			
+			
 X_test  = X_test[deadlist,:,:,:]
 y_test = y_test[deadlist]
 
 print("X_train",X_train.shape,"X_test",X_test.shape)
 X = np.concatenate((X_train, X_test), axis = 0)
-print(y_train, y_test)
-Y = np.concatenate((y_train, y_test), axis = 0)
 N = X.shape[0]
 N_train = X_train.shape[0]
 N_test = X_test.shape[0]
@@ -238,7 +221,6 @@ print(X.shape)
 #Calculate diagonal entries.
 L = []
 iL = []
-TLs = [] 
 for i in range(N):
 	Lx, iLx = xx(X[i])	
 	L.append(Lx)
@@ -248,24 +230,19 @@ for i in range(N):
 #####Below we provide a naive implementation using for-loops.
 #####Parallelize this part according to your specific computing enviroment to utilize multiple GPUs.
 H = np.zeros((N, N), dtype = np.float32)
-#for i in range(N):
-#	for j in range(N):
-#		H[i][j] = xzt(X[i], X[j], L[i], L[j], iL[i], iL[j])
-#####
-#for i in range(N):
-#	for j in range(N):
-#		H[i][j] = xz2(X[i], X[j], L[i], L[j], iL[i], iL[j],Y[i], Y[j],TLs[i],TLs[j])
-
 for i in range(N):
 	for j in range(N):
 		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
+#####
 
-print(H)
 #Solve kernel regression.
-Y_train = np.ones((N_train, 100)) * -0.1
+Y_train = np.ones((N_train, 10)) * -0.1
 for i in range(N_train):
 	Y_train[i][y_train[i]] = 0.9
 u = H[N_train:, :N_train].dot(scipy.linalg.solve(H[:N_train, :N_train], Y_train))
-print(H[:N_train, :N_train].shape,H[N_train:, :N_train].shape)
-print(y_test)
 print("test accuracy:", 1.0 * np.sum(np.argmax(u, axis = 1) == y_test) / N_test)
+
+import pickle
+f = open("samples" + str(samples) +"layer" + str(d) +'.txt', 'wb')
+list_row = H
+pickle.dump(list_row, f)
