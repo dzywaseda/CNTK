@@ -86,7 +86,7 @@ conv_threads = (32, 32)
 #CUDA kernel for activation
 trans = cp.RawKernel(r'''
 extern "C" __global__
-void trans(float s[32][32][32][32], float t[32][32][32][32], const float l[32][32], const float r[32][32], const float il[32][32], const float ir[32][32], float bs[32][32][32][32],  float ss[32][32][32][32], )
+void trans(float s[32][32][32][32], float t[32][32][32][32], const float l[32][32], const float r[32][32], const float il[32][32], const float ir[32][32], float bs[32][32][32][32],  float ss[32][32][32][32])
 {
 	int x1 = blockIdx.x;
 	int y1 = blockIdx.y;
@@ -163,8 +163,8 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1], bs, ss))
 	if fix:
 		T -= S
-	#cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
-	return cp.mean(cp.linalg.eigh(T.reshape(1024, 1024))[0])
+	#cp.mean(cp.linalg.eigh(T.reshape(1024, 1024))[0])
+	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
 
 #Load CIFAR-10.
 (X_train, y_train), (X_test, y_test) = load_cifar()
