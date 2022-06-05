@@ -6,7 +6,7 @@ from utilpy3 import load_cifar
 np.set_printoptions(threshold=10000)
 
 samples = 5
-sample_type = 10
+sample_type = 2
 train_sample_type = 0
 train_samples = 0
 
@@ -202,7 +202,6 @@ for it in range(train_sample_type):
 			
 		
 		
-
 X_train = X_train[deadlist,:,:,:]
 y_train = y_train[deadlist]
 
@@ -214,7 +213,7 @@ for it in range(sample_type):
 		if item==it:
 			x = x + 1
 			deadlist.append(index)
-		if x >= (samples):
+		if x >= (samples*10):
 			break
 			
 			
@@ -239,7 +238,9 @@ for i in range(N):
 		kernels.append(kernel)
 	L.append(Lx)
 	iL.append(iLx)
+
 print("eigenvalue for k1", kernels)
+print("eigenvalue for k1", sum(kernels)/N_train)
 
 #####Calculate kernel values.
 #####Below we provide a naive implementation using for-loops.
