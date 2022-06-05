@@ -141,14 +141,14 @@ def xx(x):
 		kernel = kernel +  ss * kernel_p
 		if i == 0:
 			kernel = ss
-		if i == d-2:
-			kernel = kernel + bs
+
 
 	L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
 	iL = 1.0 / L
 	RL.append(L)
 	iRL.append(iL)
-	trans(trans_blocks, trans_threads, (S, T, L, L, iL, iL, bs, ss))	
+	trans(trans_blocks, trans_threads, (S, T, L, L, iL, iL, bs, ss))
+	kernel = kernel + bs
 	
 	if fix:
 		T -= S
@@ -167,15 +167,23 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 		T += S
 
 	for i in range(1, d - 1):
-		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i], bs, ss))		
+		trans(trans_blocks, trans_threads, (S, T, Lx[i], Lz[i], iLx[i], iLz[i], bs, ss))
+		#FIM test
+		kernel_p = bs
+		#FIM test
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
+		## for FIM test
+		kernel = kernel +  ss * kernel_p
+		if i == 0:
+			kernel = ss
 
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1], bs, ss))
+	kernel = kernel + bs
 	if fix:
 		T -= S
 	#cp.mean(cp.linalg.eigh(T.reshape(1024, 1024))[0])
-	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
+	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024)), cp.mean(kernel)
 
 #Load CIFAR-10.
 (X_train, y_train), (X_test, y_test) = load_cifar()
@@ -246,9 +254,16 @@ print("eigenvalue for k1", sum(kernels)/N_train)
 #####Below we provide a naive implementation using for-loops.
 #####Parallelize this part according to your specific computing enviroment to utilize multiple GPUs.
 H = np.zeros((N, N), dtype = np.float32)
+kernels = []
 for i in range(N):
 	for j in range(N):
-		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
+		H[i][j], kernel = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
+		if i <= X_train.shape[0]-1 and j <= X_train.shape[0]-1:
+			kernels.append(kernel)
+
+print("eigenvalue for k2", kernels)
+print("eigenvalue for k2", sum(kernels)/N_train)
+
 #####
 
 #Solve kernel regression.
