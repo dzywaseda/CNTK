@@ -119,6 +119,7 @@ def xx(x):
 	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	bs = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	ss = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
+	kernel = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	if not fix:
 		T += S
 
@@ -130,8 +131,18 @@ def xx(x):
 		RL.append(L)
 		iRL.append(iL)
 		trans(trans_blocks, trans_threads, (S, T, L, L, iL, iL, bs, ss))
+		#FIM test
+		kernel_p = bs
+		#FIM test
 		conv3(conv_blocks, conv_threads, (S, S))
 		conv3(conv_blocks, conv_threads, (T, T))
+		
+		## for FIM test
+		kernel = kernel +  ss * kernel_p
+		if i == 0:
+			kernel = ss
+		if i == d-2:
+			kernel = kernel + bs
 
 	L = cp.sqrt(cp.diag(S.reshape(1024, 1024)).reshape(32, 32))
 	iL = 1.0 / L
@@ -141,7 +152,7 @@ def xx(x):
 	
 	if fix:
 		T -= S
-	return RL, iRL
+	return RL, iRL, cp.mean(kernel)
 
 #Caclulate the kernel value of x and z.
 #Lx and Lz are diagonal entries of $\Sigma^{(h)}(x, x)$ and $\Sigma^{(h)}(z, z)$. 
@@ -203,7 +214,7 @@ for it in range(sample_type):
 		if item==it:
 			x = x + 1
 			deadlist.append(index)
-		if x >= (samples*4):
+		if x >= (samples):
 			break
 			
 			
@@ -221,10 +232,14 @@ print(X.shape)
 #Calculate diagonal entries.
 L = []
 iL = []
+kernels = []
 for i in range(N):
-	Lx, iLx = xx(X[i])	
+	Lx, iLx,kernel = xx(X[i])
+	if i <= X_train.shape[0]-1:
+		kernels.append(kernel)
 	L.append(Lx)
 	iL.append(iLx)
+print("eigenvalue for k1", kernels)
 
 #####Calculate kernel values.
 #####Below we provide a naive implementation using for-loops.
