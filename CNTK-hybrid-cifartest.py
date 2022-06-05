@@ -5,10 +5,10 @@ import scipy.linalg
 from utilpy3 import load_cifar
 np.set_printoptions(threshold=10000)
 
-samples = 5
+samples = 20
 sample_type = 2
 train_sample_type = 0
-train_samples = 0
+test_samples = 50
 
 parser = argparse.ArgumentParser(description = 'Convolutional Neural Tangent Kernel (CNTK) for CIFAR-10')
 parser.add_argument('--depth', default = 21, type = int, help = 'depth of CNTK (#conv layers + 1)')
@@ -163,6 +163,7 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 	T = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	bs = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	ss = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
+	kernel = cp.zeros((32, 32, 32, 32), dtype = cp.float32)
 	if not fix:
 		T += S
 
@@ -221,7 +222,7 @@ for it in range(sample_type):
 		if item==it:
 			x = x + 1
 			deadlist.append(index)
-		if x >= (samples*10):
+		if x >= (test_samples):
 			break
 			
 			
@@ -262,7 +263,7 @@ for i in range(N):
 			kernels.append(kernel)
 
 print("eigenvalue for k2", kernels)
-print("eigenvalue for k2", sum(kernels)/N_train)
+print("eigenvalue for k2", sum(kernels)/N_train*N_train)
 
 #####
 
