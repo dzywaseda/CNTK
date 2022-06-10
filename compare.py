@@ -6,10 +6,10 @@ import scipy.linalg
 from utilpy3 import load_cifar
 np.set_printoptions(threshold=10000)
 
-samples = 20
+samples = 100
 sample_type = 1
 train_sample_type = 5
-train_samples = 2
+train_samples = 20
 
 parser = argparse.ArgumentParser(description = 'Convolutional Neural Tangent Kernel (CNTK) for CIFAR-10')
 parser.add_argument('--depth', default = 21, type = int, help = 'depth of CNTK (#conv layers + 1)')
@@ -241,7 +241,7 @@ indexs = pd.Series(compares[index]).sort_values(ascending = False).index[:sample
 print(indexs)
 num = 0
 for item in indexs:
-  if item <samples:
-    num = num + 1
-print(num/(samples+train_sample_type* train_samples) )
+	if item <samples:
+		num = num + 1
+print(num/(samples) )
 
