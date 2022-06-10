@@ -237,12 +237,12 @@ for i in range(N):
 H = np.zeros((N, N), dtype = np.float32)
 compare = []
 for i in range(N):
-  sum=0
+	sum=0
 	for j in range(N):
 		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
-    if i != j:
-      sum = sum + H[i][j]
-  compare.append(sum)
+		if i != j:
+			sum = sum + H[i][j]
+	compare.append(sum)
 print("smallestvalue", compare.index(min(compare)))
 print(pd.Series(compare).sort_values(ascending = False).index[:samples])
 
