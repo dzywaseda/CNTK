@@ -6,10 +6,10 @@ import scipy.linalg
 from utilpy3 import load_cifar
 np.set_printoptions(threshold=10000)
 
-samples = 50
+samples = 20
 sample_type = 1
 train_sample_type = 5
-train_samples = 10
+train_samples = 2
 
 parser = argparse.ArgumentParser(description = 'Convolutional Neural Tangent Kernel (CNTK) for CIFAR-10')
 parser.add_argument('--depth', default = 21, type = int, help = 'depth of CNTK (#conv layers + 1)')
@@ -20,7 +20,7 @@ args = parser.parse_args()
 d = args.depth
 gap = (args.gap == "yes")
 fix = (args.fix == "yes")
-py
+
 #CUDA kernel for convolution operation
 conv3 = cp.RawKernel(r'''
 extern "C" __global__
@@ -200,26 +200,13 @@ for it in range(train_sample_type):
 X_train = X_train[deadlist,:,:,:]
 y_train = y_train[deadlist]
 
-
-deadlist = []
-for it in range(sample_type):
-	x = 0
-	for index,item in enumerate(y_test):
-		if item==it:
-			x = x + 1
-			deadlist.append(index)
-		if x >= (samples):
-			break
 			
 			
-X_test  = X_test[deadlist,:,:,:]
-y_test = y_test[deadlist]
 
-print("X_train",X_train.shape,"X_test",X_test.shape)
-X = np.concatenate((X_train, X_test), axis = 0)
+X = X_train
 N = X.shape[0]
 N_train = X_train.shape[0]
-N_test = X_test.shape[0]
+
 X = cp.asarray(X).reshape(-1, 3, 1024)
 print(X.shape)
 
@@ -236,26 +223,25 @@ for i in range(N):
 #####Parallelize this part according to your specific computing enviroment to utilize multiple GPUs.
 H = np.zeros((N, N), dtype = np.float32)
 compare = []
+compares = []
 for i in range(N):
 	sum=0
+	items = []
 	for j in range(N):
 		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
+		items.append(H[i][j])
 		if i != j:
 			sum = sum + H[i][j]
+	compares.append(items)
 	compare.append(sum)
+
+index =  compare.index(min(compare))
 print("smallestvalue", compare.index(min(compare)))
-print(pd.Series(compare).sort_values(ascending = False).index[:samples])
+indexs = pd.Series(compares[index]).sort_values(ascending = False).index[:samples]
+print(indexs)
+num = 0
+for item in indexs:
+  if item <samples:
+    num = num + 1
+print(num/(samples+train_sample_type* train_samples) )
 
-#####
-
-#Solve kernel regression.
-Y_train = np.ones((N_train, 10)) * -0.1
-for i in range(N_train):
-	Y_train[i][y_train[i]] = 0.9
-u = H[N_train:, :N_train].dot(scipy.linalg.solve(H[:N_train, :N_train], Y_train))
-print("test accuracy:", 1.0 * np.sum(np.argmax(u, axis = 1) == y_test) / N_test)
-
-import pickle
-f = open("samples" + str(samples) +"layer" + str(d) +'.txt', 'wb')
-list_row = H
-pickle.dump(list_row, f)
