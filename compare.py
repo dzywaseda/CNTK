@@ -177,68 +177,71 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 (X_train, y_train), (X_test, y_test) = load_cifar()
 deadlist = []
 
-it = sample_type
-for index,item in enumerate(y_train):
-	if item==it:
-		x = x + 1
-		deadlist.append(index)
-	if x >= samples:
-		break
-			
-for it in range(train_sample_type):
-	it = it + 2
+def calculate(it):
 	x = 0
 	for index,item in enumerate(y_train):
 		if item==it:
 			x = x + 1
 			deadlist.append(index)
-		if x >= train_samples:
+		if x >= samples:
 			break
 
-X_train = X_train[deadlist,:,:,:]
-y_train = y_train[deadlist]
+	for it in range(train_sample_type):
+		it = it + 2
+		x = 0
+		for index,item in enumerate(y_train):
+			if item==it:
+				x = x + 1
+				deadlist.append(index)
+			if x >= train_samples:
+				break
 
-			
-			
-X = X_train
-N = X.shape[0]
-N_train = X_train.shape[0]
+	X_train = X_train[deadlist,:,:,:]
+	y_train = y_train[deadlist]
 
-X = cp.asarray(X).reshape(-1, 3, 1024)
-print(X.shape)
 
-#Calculate diagonal entries.
-L = []
-iL = []
-for i in range(N):
-	Lx, iLx = xx(X[i])	
-	L.append(Lx)
-	iL.append(iLx)
 
-#####Calculate kernel values.
-#####Below we provide a naive implementation using for-loops.
-#####Parallelize this part according to your specific computing enviroment to utilize multiple GPUs.
-H = np.zeros((N, N), dtype = np.float32)
-compare = []
-compares = []
-for i in range(N):
-	sum=0
-	items = []
-	for j in range(N):
-		H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
-		items.append(H[i][j])
-		if i != j:
-			sum = sum + H[i][j]
-	compares.append(items)
-	compare.append(sum)
+	X = X_train
+	N = X.shape[0]
+	N_train = X_train.shape[0]
 
-index =  compare.index(min(compare))
-print("smallestvalue", compare.index(min(compare)))
-indexs = pd.Series(compares[index]).sort_values(ascending = False).index[:samples]
-print(indexs)
-num = 0
-for item in indexs:
-	if item <samples:
-		num = num + 1
-print(num/(samples) )
+	X = cp.asarray(X).reshape(-1, 3, 1024)
+	print(X.shape)
 
+	#Calculate diagonal entries.
+	L = []
+	iL = []
+	for i in range(N):
+		Lx, iLx = xx(X[i])	
+		L.append(Lx)
+		iL.append(iLx)
+
+	#####Calculate kernel values.
+	#####Below we provide a naive implementation using for-loops.
+	#####Parallelize this part according to your specific computing enviroment to utilize multiple GPUs.
+	H = np.zeros((N, N), dtype = np.float32)
+	compare = []
+	compares = []
+	for i in range(N):
+		sum=0
+		items = []
+		for j in range(N):
+			H[i][j] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
+			items.append(H[i][j])
+			if i != j:
+				sum = sum + H[i][j]
+		compares.append(items)
+		compare.append(sum)
+
+	index =  compare.index(min(compare))
+	print("smallestvalue", compare.index(min(compare)))
+	indexs = pd.Series(compares[index]).sort_values(ascending = False).index[:samples]
+	print(indexs)
+	num = 0
+	for item in indexs:
+		if item <samples:
+			num = num + 1
+	print(num/(samples) )
+
+for it in range(8):
+	calculate(it)
