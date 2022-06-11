@@ -6,10 +6,12 @@ import scipy.linalg
 from utilpy3 import load_cifar
 np.set_printoptions(threshold=10000)
 
-samples = 100
-sample_type = 1
+samples = 10
+#test type
+sample_type = 2
+
 train_sample_type = 5
-train_samples = 20
+train_samples = 2
 
 parser = argparse.ArgumentParser(description = 'Convolutional Neural Tangent Kernel (CNTK) for CIFAR-10')
 parser.add_argument('--depth', default = 21, type = int, help = 'depth of CNTK (#conv layers + 1)')
@@ -175,14 +177,13 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 (X_train, y_train), (X_test, y_test) = load_cifar()
 deadlist = []
 
-for it in range(sample_type):
-	x = 0
-	for index,item in enumerate(y_train):
-		if item==it:
-			x = x + 1
-			deadlist.append(index)
-		if x >= samples:
-			break
+it = sample_type
+for index,item in enumerate(y_train):
+	if item==it:
+		x = x + 1
+		deadlist.append(index)
+	if x >= samples:
+		break
 			
 for it in range(train_sample_type):
 	it = it + 2
@@ -193,16 +194,12 @@ for it in range(train_sample_type):
 			deadlist.append(index)
 		if x >= train_samples:
 			break
-			
-		
-		
 
 X_train = X_train[deadlist,:,:,:]
 y_train = y_train[deadlist]
 
 			
 			
-
 X = X_train
 N = X.shape[0]
 N_train = X_train.shape[0]
