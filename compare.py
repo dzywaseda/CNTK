@@ -174,6 +174,7 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
 
 
+
 def calculate(it):
 	#Load CIFAR-10.
 	(X_train, y_train), (X_test, y_test) = load_cifar()
@@ -242,6 +243,10 @@ def calculate(it):
 		if item <samples:
 			num = num + 1
 	print(num/(samples) )
+	return (num/(samples))
 
+nums = 0
 for it in range(8):
-	calculate(it)
+	num = calculate(it)
+	nums = nums + num
+print("final call :",nums/8 )
