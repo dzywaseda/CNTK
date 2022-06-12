@@ -173,11 +173,11 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 	#cp.mean(cp.linalg.eigh(T.reshape(1024, 1024))[0])
 	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
 
-#Load CIFAR-10.
-(X_train, y_train), (X_test, y_test) = load_cifar()
-deadlist = []
 
 def calculate(it):
+	#Load CIFAR-10.
+	(X_train, y_train), (X_test, y_test) = load_cifar()
+	deadlist = []
 	x = 0
 	for index,item in enumerate(y_train):
 		if item==it:
