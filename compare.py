@@ -170,8 +170,8 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 	trans(trans_blocks, trans_threads, (S, T, Lx[-1], Lz[-1], iLx[-1], iLz[-1]))
 	if fix:
 		T -= S
-	#cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
-	return cp.mean(cp.linalg.eigh(T.reshape(1024, 1024))[0])
+	#cp.mean(cp.linalg.eigh(T.reshape(1024, 1024))[0])
+	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
 
 #Load CIFAR-10.
 (X_train, y_train), (X_test, y_test) = load_cifar()
