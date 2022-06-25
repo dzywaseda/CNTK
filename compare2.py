@@ -198,19 +198,19 @@ def calculate(it):
 				break
 
 	for item in deadlist:
-    cols = 2
-    inds = 2
-    for col in range(2):
-      for ind in range(2):
-        if col == 0 and ind == 0:
-          X_trains = X_train[deadlist,(32/cols)*col:(32/cols)*(col+1), (32/inds)*ind:(32/inds)*(ind+1),:]
-          y_trains = y_train[deadlist]
-        else:
-          X_trains = np.concatenate([X_trains, X_train[deadlist,(32/cols)*col:(32/cols)*(col+1), (32/inds)*ind:(32/inds)*(ind+1),:]],axis = 0)
-          y_train = np.concatenate([y_trains,y_train[deadlist]], axis= 0)
-  X_train = X_trains
-  y_train = y_trains
-  
+		cols = 2
+		inds = 2
+		for col in range(2):
+			for ind in range(2):
+				if col == 0 and ind == 0:
+					X_trains = X_train[deadlist,int((32/cols)*col):int((32/cols)*(col+1)), int((32/inds)*ind):int((32/inds)*(ind+1)),:]
+					y_trains = y_train[deadlist]
+				else:
+					X_trains = np.concatenate([X_trains, X_train[deadlist,int((32/cols)*col):int((32/cols)*(col+1)), int((32/inds)*ind):int((32/inds)*(ind+1)),:]],axis = 0)
+					y_train = np.concatenate([y_trains,y_train[deadlist]], axis= 0)
+	X_train = X_trains
+	y_train = y_trains
+	
 	X = X_train
 	N = X.shape[0]
 	N_train = X_train.shape[0]
