@@ -171,11 +171,11 @@ def xz(x, z, Lx, Lz, iLx, iLz):
 	if fix:
 		T -= S
 	#cp.mean(cp.linalg.eigh(T.reshape(1024, 1024))[0])
-	return cp.mean(T) if gap else cp.trace(T.reshape(1024, 1024))
+	return cp.trace(T.reshape(1024, 1024))
 
 
 
-def calculate(it):
+def calculate(it, samples):
 	#Load CIFAR-10.
 	(X_train, y_train), (X_test, y_test) = load_cifar()
 	deadlist = []
@@ -197,16 +197,21 @@ def calculate(it):
 			if x >= train_samples:
 				break
 
+	cols = 2
+	inds = 2
 	for item in deadlist:
-		cols = 2
-		inds = 2
 		for col in range(2):
 			for ind in range(2):
 				if col == 0 and ind == 0:
-					X_trains = X_train[deadlist,:,int((32/cols)*col):int((32/cols)*(col+1)), int((32/inds)*ind):int((32/inds)*(ind+1))]
+					X_trains_mid = X_train[deadlist,:,int((32/cols)*col):int((32/cols)*(col+1)), int((32/inds)*ind):int((32/inds)*(ind+1))]
+					X_trains_mid = np.repeat(X_trains_mid,2,axis=3)
+					X_trains = np.repeat(X_trains_mid,2,axis=2)
 					y_trains = y_train[deadlist]
 				else:
-					X_trains = np.concatenate([X_trains, X_train[deadlist,:,int((32/cols)*col):int((32/cols)*(col+1)), int((32/inds)*ind):int((32/inds)*(ind+1))]],axis = 0)
+					X_mid = X_train[deadlist,:,int((32/cols)*col):int((32/cols)*(col+1)), int((32/inds)*ind):int((32/inds)*(ind+1))]
+					X_mid = np.repeat(X_trains_mid,2,axis=3)
+					X_mid = np.repeat(X_trains_mid,2,axis=2)
+					X_trains = np.concatenate([X_trains, X_mid],axis = 0)
 					y_trains = np.concatenate([y_trains,y_train[deadlist]], axis= 0)
 	X_train = X_trains
 	y_train = y_trains
@@ -243,6 +248,7 @@ def calculate(it):
 		compares.append(items)
 		compare.append(sum)
 
+	samples= samples * 4
 	index =  compare.index(min(compare))
 	print("smallestvalue", compare.index(min(compare)))
 	indexs = pd.Series(compares[index]).sort_values(ascending = False).index[:samples]
@@ -256,6 +262,6 @@ def calculate(it):
 
 nums = 0
 for it in range(8):
-	num = calculate(it)
+	num = calculate(it, samples)
 	nums = nums + num
 print("final call :",nums/8 )
