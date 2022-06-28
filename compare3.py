@@ -159,10 +159,17 @@ def calculate(it):
 
 	X_train = X_train[deadlist,:,:,:]
 	y_train = y_train[deadlist]
-
-
-
-	X = X_train
+	# (N,3,32,32)
+	X = cp.zeros((X_train.shape[0], 3, 32, 32), dtype = cp.float32)
+	for item in X_train.shape(0):
+		for channel in range(3):
+			for x in range(32):
+				for y in range(32):
+					if x < 32 and y < 32:
+						X[item, channel, x, y] = X_train[item, channel, x+1, y] + X_train[item, channel, x, y+1]  + X_train[item, channel, x+1, y+1] + X_train[item, channel, x, y] 
+					else:
+						X[item, channel, x, y] = X_train[item, channel, x, y]
+					
 	N = X.shape[0]
 	N_train = X_train.shape[0]
 
