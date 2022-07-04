@@ -13,3 +13,5 @@ small dataset cifar-100 https://www.cs.toronto.edu/~kriz/cifar.html
 !wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 
 !tar zxvf /content/cifar-10-python.tar.gz
+
+To quality our dataset and make best march of our data
