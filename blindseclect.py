@@ -227,7 +227,13 @@ def calculate(it):
 		sum=0
 		items = []
 		for j in range(N):
-      if [i,j].sort() not in H.keys():
-        H["i"+ "+" +"j"] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
-      print(H)  
-      
+			keyname = ""
+			sorts = [i,j]
+			sorts.sort()
+			for item in sorts:
+				keyname = keyname + str(item) + ":"
+			if keyname[:-1] not in H.keys():
+				H[keyname[:-1]] = xz(X[i], X[j], L[i], L[j], iL[i], iL[j])
+			print(H)  
+
+calculate(0)      
